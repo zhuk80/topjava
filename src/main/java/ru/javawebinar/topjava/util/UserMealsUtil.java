@@ -44,5 +44,31 @@ public class UserMealsUtil {
                 .map(meal -> new UserMealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), true))
                 .collect(Collectors.toList());
 
+
+        /*
+        То же, только на циклах:
+
+         Map<LocalDate, Integer> allCaloriesByDay = new HashMap<>();
+
+
+        for (UserMeal userMeal : mealList) {
+            LocalDate currentDate = userMeal.getDateTime().toLocalDate();
+            allCaloriesByDay.merge(currentDate, userMeal.getCalories(), (a, b) -> a + b);
+        }
+
+        List<UserMealWithExceed> result = new ArrayList<UserMealWithExceed>();
+
+        for (UserMeal userMeal : mealList) {
+            LocalTime mealListTime = userMeal.getDateTime().toLocalTime();
+            if (TimeUtil.isBetween(mealListTime, startTime, endTime) && allCaloriesByDay1.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay) {
+                result.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), true));
+            }
+        }
+
+        return result;
+}
+         */
+
+
     }
 }
