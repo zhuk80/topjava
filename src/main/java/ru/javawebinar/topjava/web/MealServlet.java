@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -22,6 +24,11 @@ import java.time.format.DateTimeFormatter;
  */
 public class MealServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(MealServlet.class);
+    private MealDaoImp mealDaoImp;
+
+    public MealServlet() {
+        this.mealDaoImp = new MealDaoImp();
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOG.debug("forward to meals");
@@ -30,16 +37,17 @@ public class MealServlet extends HttpServlet {
 
         if ("edit".equalsIgnoreCase(action)) {
             int userId = Integer.parseInt(request.getParameter("userId"));
-            Meal meal = MealDaoImp.getById(userId);
+            Meal meal = mealDaoImp.getById(userId);
             request.setAttribute("meal", meal);
             request.getRequestDispatcher("/edit.jsp").forward(request, response);
         } else if ("delete".equalsIgnoreCase(action)) {
             int userId = Integer.parseInt(request.getParameter("userId"));
-            MealDaoImp.delete(userId);
+            mealDaoImp.delete(userId);
             response.sendRedirect("meals");
-        } else if ("new".equalsIgnoreCase(action)) {
-            request.getRequestDispatcher("/add.jsp").forward(request, response);
-        } else {
+        } //else if ("new".equalsIgnoreCase(action)) {
+        //request.getRequestDispatcher("/add.jsp").forward(request, response);
+        //}
+        else {
             generateMainView(request, response);
         }
     }
@@ -60,16 +68,22 @@ public class MealServlet extends HttpServlet {
         int calories = Integer.parseInt(request.getParameter("calories"));
 
         if (id == 0) {
-            MealDaoImp.add(description, calories, dateTimeFormatted);
+            mealDaoImp.add(new Meal(dateTimeFormatted, description, calories));
             response.sendRedirect("meals");
         } else {
-            MealDaoImp.update(id, description, calories, dateTimeFormatted);
+            Meal meal = mealDaoImp.getById(id);
+            meal.setDescription(description);
+            meal.setCalories(calories);
+            meal.setDateTime(dateTimeFormatted);
+            mealDaoImp.update(meal);
             response.sendRedirect("meals");
         }
     }
 
     private void generateMainView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("Meals", MealsUtil.getFilteredWithExceeded(MealDaoImp.meals, LocalTime.of(0, 0), LocalTime.of(23, 59), 2000));
+        List<Meal> list = new ArrayList<Meal>();
+        list.addAll(MealDaoImp.meals.values());
+        request.setAttribute("Meals", MealsUtil.getFilteredWithExceeded(list, LocalTime.MIN, LocalTime.MAX, 2000));
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
 }

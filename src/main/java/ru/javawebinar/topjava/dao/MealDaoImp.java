@@ -5,7 +5,7 @@ import ru.javawebinar.topjava.model.Meal;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -15,46 +15,39 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MealDaoImp implements MealDao {
 
     private static AtomicInteger atomicId = new AtomicInteger(1);
+    public static final Map<Integer, Meal> meals = new ConcurrentHashMap<Integer, Meal>();
 
+    static {
+        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
+        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
+        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500));
+        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000));
+        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
+        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
+    }
 
     public static AtomicInteger getAtomicId() {
         return atomicId;
     }
 
-    public static List<Meal> mealsTmp = Arrays.asList(
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
-    );
-    public static final List<Meal> meals = new CopyOnWriteArrayList<>(mealsTmp);
-    
-
-    public static Meal getById(int id) {
-
-        Meal result = null;
-
-        for (Meal meal : meals) {
-            if (meal.getId() == id) result = meal;
-        }
-        return result;
+    public Meal getById(int id) {
+        return meals.get(id);
     }
 
-    public static void delete(int id) {
-        meals.remove(getById(id));
+
+    public void delete(int id) {
+        meals.remove(id);
     }
 
-    public static void update(int id, String description, int calories, LocalDateTime dateTime) {
-        Meal meal = getById(id);
-        meal.setDescription(description);
-        meal.setCalories(calories);
-        meal.setDateTime(dateTime);
+    public void update(Meal meal) {
+        Meal mealToUpdate = meals.get(meal.getId());
+        mealToUpdate.setDateTime(meal.getDateTime());
+        mealToUpdate.setCalories(meal.getCalories());
+        mealToUpdate.setDescription(meal.getDescription());
     }
 
-    public static void add(String description, int calories, LocalDateTime dateTime) {
-        meals.add(new Meal(dateTime, description, calories));
+    public void add(Meal meal) {
+        meals.put(meal.getId(), meal);
     }
 
 }

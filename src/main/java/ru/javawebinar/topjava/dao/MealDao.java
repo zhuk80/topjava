@@ -10,16 +10,11 @@ import java.time.LocalDateTime;
  */
 public interface MealDao {
 
-    static Meal getById(int id) {
-        return null;
-    }
+    Meal getById(int id);
 
-    static void delete(int id) {
-    }
+    void delete(int id);
 
-    static void update(int id, String description, int calories, LocalDateTime dateTime) {
-    }
+    void update(Meal meal);
 
-    static void add(String description, int calories, LocalDateTime dateTime) {
-    }
+    void add(Meal meal);
 }

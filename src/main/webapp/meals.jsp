@@ -19,14 +19,7 @@
         <td></td>
     </tr>
     <c:forEach items="${Meals}" var="meal">
-        <c:choose>
-            <c:when test="${meal.isExceed()}">
-                <tr bgcolor="#ffc0cb">
-            </c:when>
-            <c:otherwise>
-                <tr bgcolor="#32cd32">
-            </c:otherwise>
-        </c:choose>
+        <tr bgcolor=<c:out value="${meal.isExceed() ? '#ffc0cb' : '#32cd32'}" />>
         <fmt:parseDate value="${meal.getDateTime()}" var="parsedDate" pattern="yyyy-MM-dd'T'HH:mm"/>
         <td><fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDate}"/></td>
         <td>${meal.getDescription()}</td>
@@ -38,7 +31,7 @@
 
 </table>
 <br>
-<a href="<c:url value='?action=new'/>">Add new meal</a></li>
+<a href="<c:url value='?action=edit&userId=0'/>">Add new meal</a></li>
 
 </body>
 </html>
