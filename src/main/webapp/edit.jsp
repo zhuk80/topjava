@@ -12,26 +12,20 @@
 <h2><c:out value="${meal.getId()>0 ? 'Edit meal list' : 'Add meal to list'}" /></h2>
 
 <form method="post">
-    <input type="hidden" name="userId" value="${meal.getId()}"/>
+    <input type="hidden" name="id" value="${meal.getId()}"/>
     <table width="50%" align="center">
         <tr>
-            <jsp:useBean id="now" class="java.util.Date"/>
             <fmt:parseDate value="${meal.getDateTime()}" var="parsedDate" pattern="yyyy-MM-dd'T'HH:mm"/>
-            <c:set var="dateTime" value="${meal.getDateTime()!=null ? parsedDate : now}"/>
-
             <td>Дата и время</td>
-            <td><input type="text" name="dateTime"
-                       value="<fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${dateTime}" />"/></td>
+            <td><input type="text" name="dateTime" value="<fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDate}" />"/></td>
         </tr>
         <tr>
             <td>Описание</td>
-            <c:set var="description" value="${meal.getDescription()!=null ? meal.getDescription() : ''}"/>
-            <td><input type="text" name="description" value="${description}"/></td>
+            <td><input type="text" name="description" value="${meal.getDescription()}"/></td>
         </tr>
         <tr>
             <td>Калории</td>
-            <c:set var="calories" value="${meal.getCalories()!=null ? meal.getCalories() : ''}"/>
-            <td><input type="text" name="calories" value="${calories}"/></td>
+            <td><input type="text" name="calories" value="${meal.getCalories()}"/></td>
         </tr>
         <tr>
             <td><input type="submit" value="<c:out value="${meal.getId()>0 ? 'Edit' : 'Add meal'}" />"></td>

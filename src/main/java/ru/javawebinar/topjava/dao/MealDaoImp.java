@@ -14,19 +14,19 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MealDaoImp implements MealDao {
 
-    private static AtomicInteger atomicId = new AtomicInteger(1);
-    public static final Map<Integer, Meal> meals = new ConcurrentHashMap<Integer, Meal>();
+    private AtomicInteger atomicId = new AtomicInteger(1);
+    private Map<Integer, Meal> meals = new ConcurrentHashMap<Integer, Meal>();
 
-    static {
-        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
-        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
-        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500));
-        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000));
-        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
-        meals.put(getAtomicId().get(), new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
+    public MealDaoImp() {
+        meals.put(atomicId.get(), new Meal(getAtomicId().getAndIncrement(), LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
+        meals.put(atomicId.get(), new Meal(getAtomicId().getAndIncrement(), LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
+        meals.put(atomicId.get(), new Meal(getAtomicId().getAndIncrement(), LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500));
+        meals.put(atomicId.get(), new Meal(getAtomicId().getAndIncrement(), LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000));
+        meals.put(atomicId.get(), new Meal(getAtomicId().getAndIncrement(), LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
+        meals.put(atomicId.get(), new Meal(getAtomicId().getAndIncrement(), LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
     }
 
-    public static AtomicInteger getAtomicId() {
+    public AtomicInteger getAtomicId() {
         return atomicId;
     }
 
@@ -40,14 +40,19 @@ public class MealDaoImp implements MealDao {
     }
 
     public void update(Meal meal) {
-        Meal mealToUpdate = meals.get(meal.getId());
-        mealToUpdate.setDateTime(meal.getDateTime());
-        mealToUpdate.setCalories(meal.getCalories());
-        mealToUpdate.setDescription(meal.getDescription());
+        meals.replace(meal.getId(), meal);
     }
 
     public void add(Meal meal) {
-        meals.put(meal.getId(), meal);
+
+        meals.put(atomicId.get() - 1, meal);
+    }
+
+    @Override
+    public List<Meal> getAll() {
+        List<Meal> list = new ArrayList<>();
+        list.addAll(meals.values());
+        return list;
     }
 
 }

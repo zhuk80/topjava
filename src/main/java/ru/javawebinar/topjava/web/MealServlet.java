@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.javawebinar.topjava.dao.MealDao;
 import ru.javawebinar.topjava.dao.MealDaoImp;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -15,8 +16,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -24,10 +23,10 @@ import java.util.List;
  */
 public class MealServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(MealServlet.class);
-    private MealDaoImp mealDaoImp;
+    private MealDao mealDao;
 
     public MealServlet() {
-        this.mealDaoImp = new MealDaoImp();
+        this.mealDao = new MealDaoImp();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,18 +35,19 @@ public class MealServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("edit".equalsIgnoreCase(action)) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            Meal meal = mealDaoImp.getById(userId);
+            int id = Integer.parseInt(request.getParameter("id"));
+            Meal meal = mealDao.getById(id);
             request.setAttribute("meal", meal);
             request.getRequestDispatcher("/edit.jsp").forward(request, response);
         } else if ("delete".equalsIgnoreCase(action)) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            mealDaoImp.delete(userId);
+            int id = Integer.parseInt(request.getParameter("id"));
+            mealDao.delete(id);
             response.sendRedirect("meals");
-        } //else if ("new".equalsIgnoreCase(action)) {
-        //request.getRequestDispatcher("/add.jsp").forward(request, response);
-        //}
-        else {
+        } else if ("new".equalsIgnoreCase(action)) {
+            Meal meal = new Meal(0, LocalDateTime.now(), "", 0);
+            request.setAttribute("meal", meal);
+            request.getRequestDispatcher("/edit.jsp").forward(request, response);
+        } else {
             generateMainView(request, response);
         }
     }
@@ -58,7 +58,7 @@ public class MealServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        int id = Integer.parseInt(request.getParameter("userId"));
+        int id = Integer.parseInt(request.getParameter("id"));
         String description = request.getParameter("description");
 
         String dateTime = request.getParameter("dateTime");
@@ -68,22 +68,17 @@ public class MealServlet extends HttpServlet {
         int calories = Integer.parseInt(request.getParameter("calories"));
 
         if (id == 0) {
-            mealDaoImp.add(new Meal(dateTimeFormatted, description, calories));
+            mealDao.add(new Meal(((MealDaoImp) mealDao).getAtomicId().getAndIncrement(), dateTimeFormatted, description, calories));
             response.sendRedirect("meals");
         } else {
-            Meal meal = mealDaoImp.getById(id);
-            meal.setDescription(description);
-            meal.setCalories(calories);
-            meal.setDateTime(dateTimeFormatted);
-            mealDaoImp.update(meal);
+            Meal meal = new Meal(id, dateTimeFormatted, description, calories);
+            mealDao.update(meal);
             response.sendRedirect("meals");
         }
     }
 
     private void generateMainView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Meal> list = new ArrayList<Meal>();
-        list.addAll(MealDaoImp.meals.values());
-        request.setAttribute("Meals", MealsUtil.getFilteredWithExceeded(list, LocalTime.MIN, LocalTime.MAX, 2000));
+        request.setAttribute("Meals", MealsUtil.getFilteredWithExceeded(mealDao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
 }

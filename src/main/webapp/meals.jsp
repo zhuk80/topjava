@@ -24,14 +24,14 @@
         <td><fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDate}"/></td>
         <td>${meal.getDescription()}</td>
         <td>${meal.getCalories()}</td>
-        <td><a href="<c:url value='?action=edit&userId=${meal.getId()}' />">Edit</a></td>
-        <td><a href="<c:url value='?action=delete&userId=${meal.getId()}' />">Delete</a></td>
+        <td><a href="<c:url value='?action=edit&id=${meal.getId()}' />">Edit</a></td>
+        <td><a href="<c:url value='?action=delete&id=${meal.getId()}' />">Delete</a></td>
         </tr>
     </c:forEach>
 
 </table>
 <br>
-<a href="<c:url value='?action=edit&userId=0'/>">Add new meal</a></li>
+<a href="<c:url value='?action=new'/>">Add new meal</a></li>
 
 </body>
 </html>

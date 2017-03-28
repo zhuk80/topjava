@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.model;
 
-import ru.javawebinar.topjava.dao.MealDaoImp;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,13 +15,13 @@ public class Meal {
 
     private int calories;
 
-    private final int id;
+    private int id;
 
-    public Meal(LocalDateTime dateTime, String description, int calories) {
+    public Meal(int id, LocalDateTime dateTime, String description, int calories) {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
-        this.id = MealDaoImp.getAtomicId().getAndIncrement();
+        this.id = id;
     }
 
     public LocalDateTime getDateTime() {
@@ -48,6 +46,10 @@ public class Meal {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setDateTime(LocalDateTime dateTime) {
