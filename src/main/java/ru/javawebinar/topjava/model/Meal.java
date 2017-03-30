@@ -63,4 +63,8 @@ public class Meal {
     public void setCalories(int calories) {
         this.calories = calories;
     }
+
+    public boolean isNew() {
+        return this.id == 0;
+    }
 }

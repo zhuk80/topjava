@@ -14,9 +14,7 @@ public interface MealDao {
 
     void delete(int id);
 
-    void update(Meal meal);
-
-    void add(Meal meal);
-
     List<Meal> getAll();
+
+    Meal save(Meal meal);
 }

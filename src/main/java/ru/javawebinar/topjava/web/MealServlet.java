@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.dao.MealDao;
-import ru.javawebinar.topjava.dao.MealDaoImp;
+import ru.javawebinar.topjava.dao.MealDaoInMemory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -26,7 +26,7 @@ public class MealServlet extends HttpServlet {
     private MealDao mealDao;
 
     public MealServlet() {
-        this.mealDao = new MealDaoImp();
+        this.mealDao = new MealDaoInMemory();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -38,7 +38,7 @@ public class MealServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             Meal meal = mealDao.getById(id);
             request.setAttribute("meal", meal);
-            request.getRequestDispatcher("/edit.jsp").forward(request, response);
+            request.getRequestDispatcher("/mealEditor.jsp").forward(request, response);
         } else if ("delete".equalsIgnoreCase(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
             mealDao.delete(id);
@@ -46,9 +46,10 @@ public class MealServlet extends HttpServlet {
         } else if ("new".equalsIgnoreCase(action)) {
             Meal meal = new Meal(0, LocalDateTime.now(), "", 0);
             request.setAttribute("meal", meal);
-            request.getRequestDispatcher("/edit.jsp").forward(request, response);
+            request.getRequestDispatcher("/mealEditor.jsp").forward(request, response);
         } else {
-            generateMainView(request, response);
+            request.setAttribute("Meals", MealsUtil.getFilteredWithExceeded(mealDao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
         }
     }
 
@@ -67,19 +68,8 @@ public class MealServlet extends HttpServlet {
 
         int calories = Integer.parseInt(request.getParameter("calories"));
 
-        if (id == 0) {
-            mealDao.add(new Meal(((MealDaoImp) mealDao).getAtomicId().getAndIncrement(), dateTimeFormatted, description, calories));
-            response.sendRedirect("meals");
-        } else {
-            Meal meal = new Meal(id, dateTimeFormatted, description, calories);
-            mealDao.update(meal);
-            response.sendRedirect("meals");
-        }
-    }
-
-    private void generateMainView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("Meals", MealsUtil.getFilteredWithExceeded(mealDao.getAll(), LocalTime.MIN, LocalTime.MAX, 2000));
-        request.getRequestDispatcher("/meals.jsp").forward(request, response);
+        mealDao.save(new Meal(id, dateTimeFormatted, description, calories));
+        response.sendRedirect("meals");
     }
 }
 
