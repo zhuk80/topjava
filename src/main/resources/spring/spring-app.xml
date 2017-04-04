@@ -12,6 +12,14 @@
         </bean>
     -->
 
+    <!--
+    <bean class="ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl" id="mealRepository"/>
+
+    <bean class="ru.javawebinar.topjava.service.MealServiceImpl" id="mealService">
+        <property name="repository" ref="mealRepository"/>
+    </bean>
+    -->
+
     <context:annotation-config/>
 
     <context:component-scan base-package="ru.javawebinar.**.repository"/>
@@ -19,5 +27,7 @@
     <context:component-scan base-package="ru.javawebinar.**.service"/>
 
     <context:component-scan base-package="ru.javawebinar.**.web"/>
+
+
 
 </beans>
