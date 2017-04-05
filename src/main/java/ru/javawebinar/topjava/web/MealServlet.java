@@ -11,6 +11,7 @@ import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
@@ -21,9 +22,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -42,41 +46,8 @@ public class MealServlet extends HttpServlet {
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
             mealRestController = appCtx.getBean(MealRestController.class);
         }
-        MealServlet.this.destroy();
+        //MealServlet.this.destroy();
     }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        mealRestController.doGet(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        mealRestController.doPost(req, resp);
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
-    }
-
-    /*
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        String id = request.getParameter("id");
-
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                LocalDateTime.parse(request.getParameter("dateTime")),
-                request.getParameter("description"),
-                Integer.valueOf(request.getParameter("calories")));
-
-        LOG.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        mealRestController.save(meal);
-        response.sendRedirect("meals");
-    }
-
-
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -107,8 +78,62 @@ public class MealServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        String id = request.getParameter("id");
+
+        String type = request.getParameter("type");
+        String dateFrom = request.getParameter("dateFrom");
+        String timeFrom = request.getParameter("timeFrom");
+
+        String dateTo = request.getParameter("dateTo");
+        String timeTo = request.getParameter("timeTo");
+        //Надо добавить нормальную проверку на валидность даты и времени
+        if ("filtered".equalsIgnoreCase(type))
+        {
+            if ((dateFrom == null && timeFrom == null && dateTo == null && timeTo == null) || (Objects.equals(dateFrom, "") && Objects.equals(timeFrom, "") && Objects.equals(dateTo, "") && Objects.equals(timeTo, ""))) {
+                response.sendRedirect("meals");
+            }
+            else {
+                LocalDate dateFromConverted = Objects.equals(dateFrom, "") ? LocalDate.MIN : LocalDate.parse(dateFrom);
+                LocalDate dateToConverted = Objects.equals(dateTo, "") ? LocalDate.MAX : LocalDate.parse(dateTo);
+                LocalTime timeFromConverted = Objects.equals(timeFrom, "") ? LocalTime.MIN : LocalTime.parse(timeFrom);
+                LocalTime timeToConverted = Objects.equals(timeTo, "") ? LocalTime.MAX : LocalTime.parse(timeTo);
+
+                LocalDateTime dateTimeFrom = LocalDateTime.of(dateFromConverted, timeFromConverted);
+                LocalDateTime dateTimeTo = LocalDateTime.of(dateToConverted, timeToConverted);
+
+                List<MealWithExceed> withExceeded = MealsUtil.getWithExceeded(mealRestController.getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+
+                if (Objects.equals(dateFrom, "") && Objects.equals(dateTo, "")) {
+                    request.setAttribute("meals", mealRestController.getFilteredByTime(withExceeded, timeFromConverted, timeToConverted));
+                    request.getRequestDispatcher("/meals.jsp").forward(request, response);
+                }else {
+                    request.setAttribute("meals", mealRestController.getFilteredByDates(withExceeded, dateTimeFrom, dateTimeTo));
+                    request.getRequestDispatcher("/meals.jsp").forward(request, response);
+                }
+            }
+        }
+        else {
+            Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+                    LocalDateTime.parse(request.getParameter("dateTime")),
+                    request.getParameter("description"),
+                    Integer.valueOf(request.getParameter("calories")));
+
+            LOG.info(meal.isNew() ? "Create {}" : "Update {}", meal);
+            mealRestController.save(meal);
+            response.sendRedirect("meals");
+        }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+    }
+
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.valueOf(paramId);
-    }*/
+    }
 }
