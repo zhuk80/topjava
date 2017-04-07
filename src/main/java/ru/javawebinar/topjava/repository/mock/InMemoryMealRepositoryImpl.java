@@ -3,15 +3,12 @@ package ru.javawebinar.topjava.repository.mock;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.Role;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.UsersUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,14 +27,11 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     {
         MealsUtil.MEALS.forEach(meal -> save(meal, UsersUtil.USERS.get(0).getId()));
-        //MealsUtil.MEALS.forEach(meal -> save(meal, UsersUtil.USERS.get(0).getId()));
     }
 
     @Override
     public Meal save(Meal meal, Integer userId) {
         ValidationUtil.checkNotFoundWithId(meal, userId);
-        //if (repository.get(meal.getId()).isNew() || meal.getUserId() != AuthorizedUser.id())
-            //throw new NotFoundException("No such meal for current user");
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
         }

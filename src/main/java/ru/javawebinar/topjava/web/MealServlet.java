@@ -39,7 +39,6 @@ public class MealServlet extends HttpServlet {
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
             mealRestController = appCtx.getBean(MealRestController.class);
         }
-        //MealServlet.this.destroy();
     }
 
     @Override
@@ -55,10 +54,7 @@ public class MealServlet extends HttpServlet {
                 int id = getId(request);
                 LOG.info("Delete {}", id);
                 mealRestController.delete(id);
-
                 refreshDefaultView(request, response, authorizedUser, userId);
-
-                //response.sendRedirect("meals");
                 break;
             case "create":
             case "update":
@@ -97,16 +93,13 @@ public class MealServlet extends HttpServlet {
             authorizedUser.setId(0);
 
 
-
         String dateTo = request.getParameter("dateTo");
         String timeTo = request.getParameter("timeTo");
         //Надо добавить нормальную проверку на валидность даты и времени
-        if ("filtered".equalsIgnoreCase(type))
-        {
+        if ("filtered".equalsIgnoreCase(type)) {
             if ((dateFrom == null && timeFrom == null && dateTo == null && timeTo == null) || (Objects.equals(dateFrom, "") && Objects.equals(timeFrom, "") && Objects.equals(dateTo, "") && Objects.equals(timeTo, ""))) {
                 refreshDefaultView(request, response, authorizedUser, userId);
-            }
-            else {
+            } else {
                 LocalDate dateFromConverted = Objects.equals(dateFrom, "") ? LocalDate.MIN : LocalDate.parse(dateFrom);
                 LocalDate dateToConverted = Objects.equals(dateTo, "") ? LocalDate.MAX : LocalDate.parse(dateTo);
                 LocalTime timeFromConverted = Objects.equals(timeFrom, "") ? LocalTime.MIN : LocalTime.parse(timeFrom);
@@ -121,14 +114,13 @@ public class MealServlet extends HttpServlet {
                     request.setAttribute("user", authorizedUser);
                     request.setAttribute("meals", mealRestController.getFilteredByTime(withExceeded, timeFromConverted, timeToConverted));
                     request.getRequestDispatcher("/meals.jsp").forward(request, response);
-                }else {
+                } else {
                     request.setAttribute("user", authorizedUser);
                     request.setAttribute("meals", mealRestController.getFilteredByDates(withExceeded, dateTimeFrom, dateTimeTo));
                     request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 }
             }
-        }
-        else if (id != null){
+        } else if (id != null) {
             Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
                     LocalDateTime.parse(request.getParameter("dateTime")),
                     request.getParameter("description"),
@@ -136,12 +128,8 @@ public class MealServlet extends HttpServlet {
 
             LOG.info(meal.isNew() ? "Create {}" : "Update {}", meal);
             mealRestController.save(meal);
-
             refreshDefaultView(request, response, authorizedUser, userId);
-
-            //response.sendRedirect("meals");
-        }else {
-            //int userId = request.getParameter("userId") != null ? Integer.parseInt(request.getParameter("userId")) : 0;
+        } else {
             LOG.info("getAll");
             refreshDefaultView(request, response, authorizedUser, userId);
         }
