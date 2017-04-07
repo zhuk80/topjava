@@ -23,7 +23,7 @@ public interface MealRepository {
 
     Meal get(int id);
 
-    Collection<Meal> getAll();
+    Collection<Meal> getAll(int userId);
 
     Collection<MealWithExceed> getFilteredByDates(List<MealWithExceed> mealWithExceeds, LocalDateTime dateTimeFrom, LocalDateTime dateTimeTo);
 

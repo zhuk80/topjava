@@ -19,7 +19,8 @@
 <section>
     <h2><a href="index.html">Home</a></h2>
     <h2>Meal list</h2>
-    <a href="meals?action=create">Add Meal</a>
+    <jsp:useBean id="user" type="ru.javawebinar.topjava.AuthorizedUser" scope="request"/>
+    <a href="meals?action=create&userId=${user.id}">Add Meal</a>
     <hr>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -41,14 +42,15 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="meals?action=update&id=${meal.id}">Update</a></td>
-                <td><a href="meals?action=delete&id=${meal.id}">Delete</a></td>
+                <td><a href="meals?action=update&id=${meal.id}&userId=${user.id}">Update</a></td>
+                <td><a href="meals?action=delete&id=${meal.id}&userId=${user.id}">Delete</a></td>
             </tr>
         </c:forEach>
     </table>
     <br>
     <form method="post" action="meals">
         <input type="hidden" name="type" value="filtered"/>
+        <input type="hidden" name="userId" value=${user.id}>
     <table border="0" cellpadding="8" cellspacing="0">
         <tr>
             <th>От даты:</th>
@@ -64,8 +66,8 @@
         </tr>
         <tr>
             <td></td><td></td>
-            <td><button type="reset">Clear</button></td>
-            <td><button type="submit">Filter</button></td>
+            <td><button type="submit" value="clear">Clear</button></td>
+            <td><button type="submit" value="filter">Filter</button></td>
         </tr>
     </table>
     </form>

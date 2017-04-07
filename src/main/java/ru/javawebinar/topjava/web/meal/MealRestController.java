@@ -47,8 +47,8 @@ public class MealRestController implements MealService {
     }
 
     @Override
-    public List<Meal> getAll() {
-        return service.getAll();
+    public List<Meal> getAll(int userId) {
+        return service.getAll(userId);
     }
 
 

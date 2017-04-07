@@ -36,9 +36,9 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public List<Meal> getAll() {
+    public List<Meal> getAll(int userId) {
         ArrayList<Meal> userMealList = new ArrayList<>();
-        for (Meal meal : repository.getAll()) {
+        for (Meal meal : repository.getAll(userId)) {
             if (meal.getUserId().equals(AuthorizedUser.id())) {
                 userMealList.add(meal);
             }

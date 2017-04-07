@@ -17,7 +17,7 @@ public interface MealService {
 
     Meal get(int id) throws NotFoundException;
 
-    List<Meal> getAll();
+    List<Meal> getAll(int userId);
 
     Collection<MealWithExceed> getFilteredByDates(List<MealWithExceed> mealWithExceeds, LocalDateTime dateTimeFrom, LocalDateTime dateTimeTo);
 

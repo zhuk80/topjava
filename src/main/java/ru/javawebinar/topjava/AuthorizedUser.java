@@ -7,6 +7,7 @@ public class AuthorizedUser {
     private int id;
 
     public static int id() {
+
         return 1;
     }
 

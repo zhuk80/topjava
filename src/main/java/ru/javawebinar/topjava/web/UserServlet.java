@@ -31,6 +31,6 @@ public class UserServlet extends HttpServlet {
         AuthorizedUser authorizedUser = new AuthorizedUser();
         authorizedUser.setId(id);
         req.setAttribute("user", authorizedUser);
-        req.getRequestDispatcher("/users.jsp").forward(req, resp);
+        req.getRequestDispatcher("/meals").forward(req, resp);
     }
 }

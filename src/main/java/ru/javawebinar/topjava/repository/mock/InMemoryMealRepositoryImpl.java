@@ -10,6 +10,7 @@ import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.UsersUtil;
+import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDateTime;
@@ -27,13 +28,14 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
-
     {
         MealsUtil.MEALS.forEach(meal -> save(meal, UsersUtil.USERS.get(0).getId()));
+        //MealsUtil.MEALS.forEach(meal -> save(meal, UsersUtil.USERS.get(0).getId()));
     }
 
     @Override
     public Meal save(Meal meal, Integer userId) {
+        ValidationUtil.checkNotFoundWithId(meal, userId);
         //if (repository.get(meal.getId()).isNew() || meal.getUserId() != AuthorizedUser.id())
             //throw new NotFoundException("No such meal for current user");
         if (meal.isNew()) {
@@ -43,36 +45,25 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         return repository.put(meal.getId(), meal);
     }
 
-
-    /*public Meal save(Meal meal) {
-        if (repository.get(meal.getId()).isNew() || meal.getUserId() != AuthorizedUser.id())
-            throw new NotFoundException("No such meal for current user");
-        if (meal.isNew()) {
-            meal.setId(counter.incrementAndGet());
-        }
-        return repository.put(meal.getId(), meal);
-    }*/
-
     @Override
     public boolean delete(int id) {
-        if (repository.get(id).getUserId() != AuthorizedUser.id())
-            throw new NotFoundException("No such meal for current user");
+        ValidationUtil.checkNotFoundWithId(repository.get(id).getUserId() == AuthorizedUser.id(), id);
         return repository.remove(id) != null;
     }
 
     @Override
     public Meal get(int id) {
-        if (repository.get(id).getUserId() != AuthorizedUser.id())
-            throw new NotFoundException("No such meal for current user");
+        ValidationUtil.checkNotFoundWithId(repository.get(id).getUserId() == AuthorizedUser.id(), id);
         return repository.get(id);
     }
 
     @Override
-    public Collection<Meal> getAll() {
+    public Collection<Meal> getAll(int userId) {
+        ValidationUtil.checkNotFound(AuthorizedUser.id() == userId, "Wrong user " + userId);
         if (repository.values().isEmpty())
             return Collections.emptyList();
         ArrayList<Meal> mealsSorted = new ArrayList<>(repository.values());
-        Collections.sort(mealsSorted, (o1, o2) -> o2.getDateTime().compareTo(o1.getDateTime()));
+        mealsSorted.sort((o1, o2) -> o2.getDateTime().compareTo(o1.getDateTime()));
         return mealsSorted;
     }
 
