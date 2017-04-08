@@ -23,7 +23,6 @@ import java.util.Objects;
 public class MealServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(MealServlet.class);
 
-    //private MealRepository repository;
     private ConfigurableApplicationContext springContext;
     private MealRestController mealController;
 
