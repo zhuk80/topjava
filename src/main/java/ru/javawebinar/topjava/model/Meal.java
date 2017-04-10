@@ -15,6 +15,12 @@ public class Meal extends BaseEntity {
 
     private final int calories;
 
+    public Meal() {
+        this.dateTime = LocalDateTime.now();
+        this.description = "";
+        this.calories = 100;
+    }
+
     public Meal(LocalDateTime dateTime, String description, int calories) {
         this(null, dateTime, description, calories);
     }
@@ -25,6 +31,7 @@ public class Meal extends BaseEntity {
         this.description = description;
         this.calories = calories;
     }
+
 
     public LocalDateTime getDateTime() {
         return dateTime;
