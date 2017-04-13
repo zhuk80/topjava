@@ -32,3 +32,14 @@ public class SpringMain {
         }
     }
 }
+/*
+@Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
+        mealController = springContext.getBean(MealRestController.class);
+    }
+
+    private ConfigurableApplicationContext springContext;
+    private MealRestController mealController;
+ */

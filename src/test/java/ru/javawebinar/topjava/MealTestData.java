@@ -29,7 +29,6 @@ public class MealTestData {
     public static final Meal MEAL8 = new Meal(8, LocalDateTime.of(2015,5,31,19,0), "AdminLunch", 500);
 
     public List<Meal> mealList = new ArrayList<>();
-
     {
         mealList.add(MEAL1);
         mealList.add(MEAL2);
