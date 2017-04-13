@@ -29,7 +29,7 @@ public class JdbcMealRepositoryImpl implements MealRepository {
     public JdbcMealRepositoryImpl(DataSource dataSource, JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(dataSource)
                 .withTableName("meals")
-                .usingGeneratedKeyColumns("meal_id");
+                .usingGeneratedKeyColumns("id");
 
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
@@ -44,10 +44,23 @@ public class JdbcMealRepositoryImpl implements MealRepository {
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories());
 
+        /*
+        else if (get(meal.getId(), userId) == null) {
+            return null;
+         */
+        if (meal.isNew()) {
+            Number newKey = insertMeal.executeAndReturnKey(map);
+            meal.setId(newKey.intValue());
+        }
+        else if (get(meal.getId(), userId) == null){
+            return null;
+        }
+        else {
             namedParameterJdbcTemplate.update(
-                    "UPDATE meals SET user_id=:userId, id=:id, datetime=:datetime, " +
-                            "description=:description, calories=:calories WHERE user_id=:userId", map);
-        return meal;
+                    "UPDATE meals SET datetime=:datetime, " +
+                            "description=:description, calories=:calories WHERE user_id=:userId AND id=:id", map);
+        }
+            return meal;
     }
 
     @Override
