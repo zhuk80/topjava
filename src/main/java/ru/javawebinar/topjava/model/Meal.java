@@ -1,5 +1,10 @@
 package ru.javawebinar.topjava.model;
 
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,13 +26,36 @@ CREATE TABLE meals
   FOREIGN KEY ( user_id ) REFERENCES USERS (id) ON DELETE CASCADE
 );
  */
-//@Entity
-//@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = "user_id, date_time", name = "meals_unique_user_datetime_idx")})
+@NamedQueries({
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal meal WHERE meal.id=:id AND meal.user.id=:userId"),
+        @NamedQuery(name = Meal.GET, query = "SELECT meal FROM Meal meal WHERE meal.id=:id AND meal.user.id=:userId"),
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT meal FROM Meal meal WHERE meal.user.id=:userId ORDER BY meal.dateTime DESC"),
+        @NamedQuery(name = Meal.GET_BETWEEN, query = "SELECT meal FROM Meal meal WHERE " +
+                "meal.dateTime BETWEEN :startDate AND :endDate AND " +
+                "meal.user.id=:userId ORDER BY meal.dateTime DESC"),
+})
+@Entity
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
 public class Meal extends BaseEntity {
+
+    public static final String DELETE = "Meal.delete";
+    public static final String GET = "Meal.get";
+    public static final String ALL_SORTED = "Meal.getAllSorted";
+    public static final String GET_BETWEEN = "Meal.getBetween";
+
+
+    @Column(name = "date_time", nullable = false, unique = false)
+    @NotBlank
+    @DateTimeFormat
     private LocalDateTime dateTime;
 
+    @Column(name = "description", nullable = false, unique = false)
+    @NotBlank
+    @Length(min = 5)
     private String description;
 
+    @Column(name = "calories", nullable = false, unique = false)
+    @Range(min = 10, max = 10000)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
