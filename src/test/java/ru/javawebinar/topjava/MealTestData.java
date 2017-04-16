@@ -28,23 +28,13 @@ public class MealTestData {
     public static final Meal MEAL7 = new Meal(7, LocalDateTime.of(2015,5,31,14,0), "AdminDinner", 1000);
     public static final Meal MEAL8 = new Meal(8, LocalDateTime.of(2015,5,31,19,0), "AdminLunch", 500);
 
-    public List<Meal> mealList = new ArrayList<>();
-    {
-        mealList.add(MEAL1);
-        mealList.add(MEAL2);
-        mealList.add(MEAL3);
-        mealList.add(MEAL4);
-        mealList.add(MEAL5);
-        mealList.add(MEAL6);
-        mealList.add(MEAL7);
-        mealList.add(MEAL8);
-    }
+    public static final Meal MEAL15 = new Meal(100001, LocalDateTime.of(2017,5,30,9,0), "Breakfast", 15);
 
     public static final ModelMatcher<Meal> MATCHER = new ModelMatcher<>(
-            (expected, actual) -> expected == actual ||
+            /*(expected, actual) -> expected == actual ||
                     (Objects.equals(expected.getCalories(), actual.getCalories()) &&
                     Objects.equals(expected.getDateTime(), actual.getDateTime()) &&
                     Objects.equals(expected.getDescription(), actual.getDescription()) &&
-                    Objects.equals(expected.getId(), actual.getId())));
+                    Objects.equals(expected.getId(), actual.getId()))*/);
 
 }
