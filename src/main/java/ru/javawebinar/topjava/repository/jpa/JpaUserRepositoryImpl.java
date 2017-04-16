@@ -10,7 +10,6 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Repository
-
 public class JpaUserRepositoryImpl implements UserRepository {
 
 /*
