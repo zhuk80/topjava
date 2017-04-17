@@ -4,6 +4,7 @@ import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -30,7 +32,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
-
+    private static final Logger LOG = getLogger(MealServiceTest.class);
     static {
         SLF4JBridgeHandler.install();
     }
@@ -49,7 +51,9 @@ public class MealServiceTest {
 
     @After
     public void end() {
-        timeStamps.add("Test " + testName.getMethodName() + " - " + (System.currentTimeMillis() - start) + " ms");
+        String result = "Test " + testName.getMethodName() + " - " + (System.currentTimeMillis() - start) + " ms";
+        timeStamps.add(result);
+        LOG.debug(result);
     }
 
     @AfterClass
