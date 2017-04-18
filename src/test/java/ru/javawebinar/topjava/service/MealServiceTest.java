@@ -37,7 +37,7 @@ public class MealServiceTest {
         SLF4JBridgeHandler.install();
     }
     private long start;
-    static List<String> timeStamps = new ArrayList<>();
+    private static List<String> timeStamps = new ArrayList<>();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

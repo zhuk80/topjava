@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -44,17 +45,17 @@ public class Meal extends BaseEntity {
     public static final String GET_BETWEEN = "Meal.getBetween";
 
 
-    @Column(name = "date_time", nullable = false, unique = false)
-    @NotBlank
+    @Column(name = "date_time", nullable = false)
+    @NotNull
     @DateTimeFormat
     private LocalDateTime dateTime;
 
-    @Column(name = "description", nullable = false, unique = false)
+    @Column(name = "description", nullable = false)
     @NotBlank
     @Length(min = 5)
     private String description;
 
-    @Column(name = "calories", nullable = false, unique = false)
+    @Column(name = "calories", nullable = false)
     @Range(min = 10, max = 10000)
     private int calories;
 
