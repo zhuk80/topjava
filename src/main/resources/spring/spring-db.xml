@@ -13,13 +13,14 @@
 
 
 <!--<context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>-->
-    <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>
+    <!--<context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>-->
 
 
     <!--<context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>-->
 
+    <!--Moved to profiles
     <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
-    <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
+    <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>-->
 
     <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
         <jdbc:script location="classpath:db/${jdbc.initLocation}"/>
@@ -64,7 +65,6 @@
 
     <beans profile="hsqldb">
         <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>
-
         <!--no pooling-->
         <bean id="dataSource"
               class="org.springframework.jdbc.datasource.DriverManagerDataSource"
@@ -76,7 +76,6 @@
 
     <beans profile="postgres">
         <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>
-
         <bean id="dataSource"
               class="org.apache.tomcat.jdbc.pool.DataSource"
               p:driverClassName="org.postgresql.Driver"
@@ -86,9 +85,24 @@
     </beans>
 
     <beans profile="jdbc">
+        <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
+        <jpa:repositories base-package="ru.javawebinar.**.repository.jdbc"/>
+        <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+            <constructor-arg ref="dataSource"/>
+        </bean>
+        <bean id="namedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+            <constructor-arg ref="dataSource"/>
+        </bean>
     </beans>
+
     <beans profile="jpa">
+        <context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>
+        <jpa:repositories base-package="ru.javawebinar.**.repository.jpa"/>
     </beans>
+
     <beans profile="datajpa">
+        <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
+        <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
     </beans>
+
 </beans>
