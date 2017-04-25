@@ -72,6 +72,8 @@
               p:url="${database.url}"
               p:username="${database.username}"
               p:password="${database.password}"/>
+        <bean id="jdbcMealRepositoryHsqldbImpl" class="ru.javawebinar.topjava.repository.jdbc.JdbcMealRepositoryHsqldbImpl">
+        </bean>
     </beans>
 
     <beans profile="postgres">
@@ -82,6 +84,8 @@
               p:url="${database.url}"
               p:username="${database.username}"
               p:password="${database.password}"/>
+        <bean id="jdbcMealRepositoryImpl" class="ru.javawebinar.topjava.repository.jdbc.JdbcMealRepositoryImpl">
+        </bean>
     </beans>
 
     <beans profile="jdbc">

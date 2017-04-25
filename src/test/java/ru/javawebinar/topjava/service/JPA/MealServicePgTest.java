@@ -5,7 +5,6 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.service.MealServiceTestParent;
 
 
-@ActiveProfiles({"hsqldb", "jpa"})
-public class MealServiceTest extends MealServiceTestParent {
-
+@ActiveProfiles({"postgres", "jpa"})
+public class MealServicePgTest extends MealServiceTestParent {
 }

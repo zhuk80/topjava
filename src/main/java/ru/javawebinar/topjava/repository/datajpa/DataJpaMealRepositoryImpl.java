@@ -14,8 +14,12 @@ import java.util.List;
 @Repository
 public class DataJpaMealRepositoryImpl implements MealRepository {
 
+    private final CrudMealRepository crudRepository;
+
     @Autowired
-    private CrudMealRepository crudRepository;
+    public DataJpaMealRepositoryImpl(CrudMealRepository crudRepository) {
+        this.crudRepository = crudRepository;
+    }
 
     @PersistenceContext
     private EntityManager em;

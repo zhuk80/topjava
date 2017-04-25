@@ -5,6 +5,6 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.service.UserServiceTestParent;
 
 @ActiveProfiles({"hsqldb", "jpa"})
-public class UserServiceTest extends UserServiceTestParent {
+public class UserServiceHsTest extends UserServiceTestParent {
 
 }
