@@ -29,7 +29,4 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     @Transactional
     @Override
     Meal save(Meal meal);
-
-
-
 }
