@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -18,9 +19,6 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
     @Autowired
     private CrudUserRepository crudRepository;
 
-    @PersistenceContext
-    private EntityManager em;
-
     @Override
     public User save(User user) {
         return crudRepository.save(user);
@@ -33,7 +31,9 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
 
     @Override
     public User get(int id) {
-        return crudRepository.findOne(id);
+        User user = crudRepository.findOne(id);
+        Hibernate.isInitialized(user);
+        return user;
     }
 
     @Override
@@ -48,11 +48,8 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
 
     public User getWithMeals(int id)
     {
-        List<Meal> mealList = em.createNamedQuery(Meal.ALL_SORTED, Meal.class)
-                .setParameter("userId", id)
-                .getResultList();
-        User user = get(id);
-        user.setMeals(mealList.isEmpty() ? null : mealList);
+        User user = crudRepository.getWithMeals(id);
+        Hibernate.isInitialized(user);
         return user;
     }
 }

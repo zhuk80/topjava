@@ -1,13 +1,10 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,12 +36,13 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        return crudMealRepository.getOne(id, userId);
+        Meal one = crudMealRepository.findOne(id, userId);
+        return one;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return crudMealRepository.findAllByUserIdOrderByIdDesc(userId);
+        return crudMealRepository.findAllByUserIdOrderByDateTimeDesc(userId);
     }
 
     @Override
@@ -52,10 +50,9 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
         return crudMealRepository.getBetween(startDate, endDate, userId);
     }
 
-    Meal getWithUser (int id, int userId)
+    public Meal getWithUser (int id, int userId)
     {
-        Meal meal = get(id, userId);
-        meal.setUser(crudUserRepository.findOne(userId));
+        Meal meal = crudMealRepository.getWithUser(id, userId);
         return meal;
     }
 }

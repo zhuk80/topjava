@@ -46,7 +46,7 @@ public class MealServiceTestParent extends UserServiceTestParent {
     }
 
     @Autowired
-    private MealService service;
+    public MealService service;
 
     @Override
     @Test
