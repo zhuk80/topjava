@@ -11,12 +11,14 @@ import ru.javawebinar.topjava.service.UserServiceTestParent;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static ru.javawebinar.topjava.Profiles.ACTIVE_DB;
+import static ru.javawebinar.topjava.Profiles.DATAJPA;
 import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.MealTestData.*;
 
 
-@ActiveProfiles({"hsqldb", "datajpa"})
-public class UserServiceHsTest extends UserServiceTestParent {
+@ActiveProfiles({ACTIVE_DB, DATAJPA})
+public class UserServiceTest extends UserServiceTestParent {
 
     @Test
     public void testGetWithMeals() throws Exception {

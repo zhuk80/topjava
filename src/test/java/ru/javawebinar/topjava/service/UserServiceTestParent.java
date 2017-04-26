@@ -2,14 +2,9 @@ package ru.javawebinar.topjava.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.bridge.SLF4JBridgeHandler;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -20,19 +15,8 @@ import java.util.Collections;
 
 import static ru.javawebinar.topjava.UserTestData.*;
 
-@ContextConfiguration({
-        "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
-})
-@RunWith(SpringRunner.class)
-@Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-public class UserServiceTestParent {
 
-    static {
-        // Only for postgres driver logging
-        // It uses java.util.logging and logged via jul-to-slf4j bridge
-        SLF4JBridgeHandler.install();
-    }
+public class UserServiceTestParent extends UserMealServiceParent {
 
     @Autowired
     public UserService service;
@@ -55,23 +39,27 @@ public class UserServiceTestParent {
         service.save(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
     }
 
+    @Override
     @Test
     public void testDelete() throws Exception {
         service.delete(USER_ID);
         MATCHER.assertCollectionEquals(Collections.singletonList(ADMIN), service.getAll());
     }
 
+    @Override
     @Test(expected = NotFoundException.class)
-    public void testNotFoundDelete() throws Exception {
+    public void testDeleteNotFound() throws Exception {
         service.delete(1);
     }
 
+    @Override
     @Test
     public void testGet() throws Exception {
         User user = service.get(USER_ID);
         MATCHER.assertEquals(USER, user);
     }
 
+    @Override
     @Test(expected = NotFoundException.class)
     public void testGetNotFound() throws Exception {
         service.get(1);
@@ -83,12 +71,14 @@ public class UserServiceTestParent {
         MATCHER.assertEquals(USER, user);
     }
 
+    @Override
     @Test
     public void testGetAll() throws Exception {
         Collection<User> all = service.getAll();
         MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, USER), all);
     }
 
+    @Override
     @Test
     public void testUpdate() throws Exception {
         User updated = new User(USER);
@@ -97,4 +87,6 @@ public class UserServiceTestParent {
         service.update(updated);
         MATCHER.assertEquals(updated, service.get(USER_ID));
     }
+
+
 }
