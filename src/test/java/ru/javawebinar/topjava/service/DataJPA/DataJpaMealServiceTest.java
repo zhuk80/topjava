@@ -14,7 +14,7 @@ import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 
 
 @ActiveProfiles({ACTIVE_DB, DATAJPA})
-public class MealServiceTest extends MealServiceTestParent {
+public class DataJpaMealServiceTest extends MealServiceTestParent {
 
     @Test
     public void testGetWithUser() throws Exception {

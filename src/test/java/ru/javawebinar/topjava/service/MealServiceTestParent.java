@@ -20,7 +20,7 @@ import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 
-public class MealServiceTestParent extends UserServiceTestParent {
+public class MealServiceTestParent extends ServiceTestParent {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

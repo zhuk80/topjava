@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-public abstract class UserMealServiceParent {
+public abstract class ServiceTestParent {
 
     static final Logger LOG = LoggerFactory.getLogger(MealServiceTestParent.class);
     static StringBuilder results = new StringBuilder();

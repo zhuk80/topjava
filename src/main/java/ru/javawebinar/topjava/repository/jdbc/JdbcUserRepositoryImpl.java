@@ -75,6 +75,6 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
     @Override
     public User getWithMeals(int id) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

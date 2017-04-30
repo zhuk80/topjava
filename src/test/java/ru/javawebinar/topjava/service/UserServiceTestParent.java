@@ -16,7 +16,7 @@ import java.util.Collections;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 
-public class UserServiceTestParent extends UserMealServiceParent {
+public class UserServiceTestParent extends ServiceTestParent {
 
     @Autowired
     public UserService service;

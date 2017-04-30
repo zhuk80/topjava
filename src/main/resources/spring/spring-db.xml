@@ -76,10 +76,18 @@
     </beans>
 
     <beans profile="jpa">
+        <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
+            <jdbc:script location="classpath:db/${jdbc.initLocation}"/>
+            <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
+         </jdbc:initialize-database>
         <context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>
     </beans>
 
     <beans profile="datajpa">
+        <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
+            <jdbc:script location="classpath:db/${jdbc.initLocation}"/>
+            <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
+         </jdbc:initialize-database>
         <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
         <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
     </beans>

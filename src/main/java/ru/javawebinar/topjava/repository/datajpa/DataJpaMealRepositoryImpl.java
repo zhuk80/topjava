@@ -1,12 +1,13 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Function;
 
 @Repository
 public class DataJpaMealRepositoryImpl implements MealRepository {
@@ -36,8 +37,7 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        Meal one = crudMealRepository.findOne(id, userId);
-        return one;
+        return crudMealRepository.findOne(id, userId);
     }
 
     @Override
@@ -52,7 +52,6 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
 
     public Meal getWithUser (int id, int userId)
     {
-        Meal meal = crudMealRepository.getWithUser(id, userId);
-        return meal;
+        return crudMealRepository.getWithUser(id, userId);
     }
 }
