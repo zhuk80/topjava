@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.matcher;
 import org.junit.Assert;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,7 @@ public class ModelMatcher<T> {
 
     public interface Equality<T> {
         boolean areEqual(T expected, T actual);
-        }
+    }
 
     public ModelMatcher() {
         this((T expected, T actual) -> expected == actual || String.valueOf(expected).equals(String.valueOf(actual)));
