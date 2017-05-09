@@ -3,12 +3,14 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
+<jsp:include page="fragments/headTag.jsp"/>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title><spring:message code="meals.meal"/></title>
     <link rel="stylesheet" href="resources/css/style.css">
 </head>
 <body>
+<jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <h2><a href="meals"><spring:message code="common.home"/></a></h2>
     <h2>${param.action == 'create' ? '<spring:message code="meals.createMeal"/>' : '<spring:message code="meals.editMeal"/>'}</h2>
@@ -32,5 +34,6 @@
         <button onclick="window.history.back()"><spring:message code="common.cancel"/></button>
     </form>
 </section>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

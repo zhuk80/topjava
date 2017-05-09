@@ -12,9 +12,7 @@ import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -37,7 +35,11 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void testSave() throws Exception {
-        User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, Collections.singleton(Role.ROLE_USER));
+        //User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, Collections.singleton(Role.ROLE_USER));
+        Set<Role> set = new HashSet<>();
+        set.add(Role.ROLE_ADMIN);
+        set.add(Role.ROLE_TEST);
+        User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, set);
         User created = service.save(newUser);
         newUser.setId(created.getId());
         MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, newUser, USER), service.getAll());
@@ -84,7 +86,11 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void testUpdate() throws Exception {
+        Set<Role> set = new HashSet<>();
+        set.add(Role.ROLE_ADMIN);
+        set.add(Role.ROLE_TEST);
         User updated = new User(USER);
+        updated.setRoles(set);
         updated.setName("UpdatedName");
         updated.setCaloriesPerDay(330);
         service.update(updated);
