@@ -37,7 +37,7 @@ public class ModelMatcher<T> {
         boolean areEqual(T expected, T actual);
     }
 
-    private ModelMatcher(Class<T> entityClass, Equality<T> equality) {
+    public ModelMatcher(Class<T> entityClass, Equality<T> equality) {
         this.entityClass = entityClass;
         this.equality = equality;
     }
