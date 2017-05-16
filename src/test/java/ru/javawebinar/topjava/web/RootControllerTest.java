@@ -52,16 +52,16 @@ public class RootControllerTest extends AbstractControllerTest {
                 .andExpect(view().name("meals"))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
                 .andExpect(model().attribute("meals", hasSize(6)))
+                .andExpect(model().attribute("meals", hasItem(
+                        allOf(
+                                hasProperty("id", is(MEAL1.getId())),
+                                hasProperty("dateTime", is(MEAL1.getDateTime())),
+                                hasProperty("description", is(MEAL1.getDescription())),
+                                hasProperty("calories", is(MEAL1.getCalories()))
+                        )
+                )));
                 //.andExpect(model().attribute("meals", MealsUtil.getWithExceeded(MEALS, 2000))
-                .andExpect(model().attribute("meals", matcher.contentListMatcher(MealsUtil.getWithExceeded(MEALS, 2000))));
+                //.andExpect(model().attribute("meals", matcher.contentListMatcher(MealsUtil.getWithExceeded(MEALS, 2000))));
 
     }
 }
-//MealsUtil.getWithExceeded(mealService.getAll(AuthorizedUser.id()), AuthorizedUser.getCaloriesPerDay())); MealsUtil.getWithExceeded(MEALS, 2000)
-//AssertionErrors.assertEquals("Model attribute \'" + name + "\'", value, mav.getModel().get(name));
-/*
-@Override
-public void match(MvcResult result) throws Exception {
-    ModelAndView mav = getModelAndView(result);
-    assertEquals("Model attribute '" + name + "'", value, mav.getModel().get(name));
-}*/
