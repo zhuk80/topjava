@@ -39,13 +39,13 @@ public class RootControllerTest extends AbstractControllerTest {
 
     @Test
     public void testMeals() throws Exception {
-        ModelMatcher<MealWithExceed> matcher = new ModelMatcher<>(MealWithExceed.class, new ModelMatcher.Equality<MealWithExceed>() {
+        /*ModelMatcher<MealWithExceed> matcher = new ModelMatcher<>(MealWithExceed.class, new ModelMatcher.Equality<MealWithExceed>() {
             @Override
             public boolean areEqual(MealWithExceed expected, MealWithExceed actual) {
                 return true;
             }
         });
-        ResultMatcher resultMatcher = matcher.contentListMatcher(MealsUtil.getWithExceeded(MEALS, 2000));
+        ResultMatcher resultMatcher = matcher.contentListMatcher(MealsUtil.getWithExceeded(MEALS, 2000));*/
         mockMvc.perform(get("/meals"))
                 .andDo(print())
                 .andExpect(status().isOk())

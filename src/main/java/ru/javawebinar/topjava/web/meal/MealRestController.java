@@ -4,11 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealWithExceed;
+
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,10 +44,16 @@ public class MealRestController extends AbstractMealController {
 
     //@Override
     @PutMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Meal create(@RequestBody Meal meal, Model model) {
+    public ResponseEntity<Meal> create(@RequestBody Meal meal, Model model) {
         Meal resultMeal = super.create(meal);
-        model.addAttribute("meal", resultMeal);
-        return resultMeal;
+
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(resultMeal.getId()).toUri();
+
+        //model.addAttribute("meal", resultMeal);
+        //return resultMeal;
+        return ResponseEntity.created(uriOfNewResource).body(resultMeal);
     }
 
     @Override
