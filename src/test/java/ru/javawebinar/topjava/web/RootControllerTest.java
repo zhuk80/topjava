@@ -1,17 +1,9 @@
 package ru.javawebinar.topjava.web;
 
-import org.hamcrest.Matcher;
+
 import org.junit.Test;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.web.servlet.ModelAndView;
-import ru.javawebinar.topjava.matcher.ModelMatcher;
-import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealWithExceed;
-import ru.javawebinar.topjava.util.MealsUtil;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,13 +31,6 @@ public class RootControllerTest extends AbstractControllerTest {
 
     @Test
     public void testMeals() throws Exception {
-        /*ModelMatcher<MealWithExceed> matcher = new ModelMatcher<>(MealWithExceed.class, new ModelMatcher.Equality<MealWithExceed>() {
-            @Override
-            public boolean areEqual(MealWithExceed expected, MealWithExceed actual) {
-                return true;
-            }
-        });
-        ResultMatcher resultMatcher = matcher.contentListMatcher(MealsUtil.getWithExceeded(MEALS, 2000));*/
         mockMvc.perform(get("/meals"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -60,8 +45,5 @@ public class RootControllerTest extends AbstractControllerTest {
                                 hasProperty("calories", is(MEAL1.getCalories()))
                         )
                 )));
-                //.andExpect(model().attribute("meals", MealsUtil.getWithExceeded(MEALS, 2000))
-                //.andExpect(model().attribute("meals", matcher.contentListMatcher(MealsUtil.getWithExceeded(MEALS, 2000))));
-
     }
 }

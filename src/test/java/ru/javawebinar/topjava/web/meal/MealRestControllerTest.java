@@ -2,27 +2,39 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.junit.Test;
 import org.springframework.http.MediaType;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.test.web.servlet.ResultActions;
+import ru.javawebinar.topjava.matcher.ModelMatcher;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.time.Month;
+import java.util.Arrays;
+import java.util.List;
 
 import static java.time.LocalDateTime.of;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
+import static ru.javawebinar.topjava.MealTestData.*;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static ru.javawebinar.topjava.MealTestData.*;
+
 /**
  * Created by Evgeniy on 16.05.2017.
  */
-public class MealRestControllerTest extends AbstractControllerTest{
+public class MealRestControllerTest extends AbstractControllerTest {
+
+    @Test
+    public void testGet() throws Exception {
+        ResultActions result = mockMvc.perform(get("/rest/meals/get/100002"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        Meal meal = JsonUtil.readValue(result.andReturn().getResponse().getContentAsString(), Meal.class);
+        MATCHER.assertEquals(MEAL1, meal);
+    }
 
     @Test
     public void testDelete() throws Exception {
@@ -32,34 +44,47 @@ public class MealRestControllerTest extends AbstractControllerTest{
 
     @Test
     public void testGetAll() throws Exception {
-        mockMvc.perform(get("/rest/meals"))
+        ResultActions result = mockMvc.perform(get("/rest/meals"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                //How to add ModelAndView: java.lang.AssertionError: No ModelAndView found
-                .andExpect(content().string("[{\"id\":100007,\"dateTime\":\"2015-05-31T20:00:00\",\"description\":\"Ужин\",\"calories\":510,\"exceed\":true},{\"id\":100006,\"dateTime\":\"2015-05-31T13:00:00\",\"description\":\"Обед\",\"calories\":1000,\"exceed\":true},{\"id\":100005,\"dateTime\":\"2015-05-31T10:00:00\",\"description\":\"Завтрак\",\"calories\":500,\"exceed\":true},{\"id\":100004,\"dateTime\":\"2015-05-30T20:00:00\",\"description\":\"Ужин\",\"calories\":500,\"exceed\":false},{\"id\":100003,\"dateTime\":\"2015-05-30T13:00:00\",\"description\":\"Обед\",\"calories\":1000,\"exceed\":false},{\"id\":100002,\"dateTime\":\"2015-05-30T10:00:00\",\"description\":\"Завтрак\",\"calories\":500,\"exceed\":false}]"));
+                .andExpect(status().isOk());
+        List<MealWithExceed> meals = JsonUtil.readValues(result.andReturn().getResponse().getContentAsString(), MealWithExceed.class);
+        ModelMatcher<MealWithExceed> matcher = ModelMatcher.of(MealWithExceed.class);
+        matcher.assertCollectionEquals(MealsUtil.getWithExceeded(MEALS, 2000), meals);
     }
 
     @Test
     public void testCreate() throws Exception {
-        mockMvc.perform(put("/rest/meals/create").contentType(MediaType.APPLICATION_JSON).content("{\"id\":null,\"dateTime\":\"2015-05-31T20:00:00\",\"description\":\"TestMeal\",\"calories\":510}"))
-                //How to add ModelAndView: java.lang.AssertionError: No ModelAndView found
-                //.andExpect(model().attribute("meals", hasSize(7)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("{\"id\":100010,\"dateTime\":\"2015-05-31T20:00:00\",\"description\":\"TestMeal\",\"calories\":510,\"user\":null}"));
-
+        Meal meal = new Meal(of(2015, Month.MAY, 31, 20, 0), "CreatedMeal", 500);
+        ResultActions result = mockMvc.perform(put("/rest/meals/create").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.writeValue(meal)))
+                .andExpect(status().isCreated());
+        Meal createdMeal = JsonUtil.readValue(result.andReturn().getResponse().getContentAsString(), Meal.class);
+        meal.setId(100010);
+        MATCHER.assertEquals(meal, createdMeal);
     }
 
     @Test
     public void testUpdate() throws Exception {
-        mockMvc.perform(put("/rest/meals/update/100002").contentType(MediaType.APPLICATION_JSON).content("{\"id\":100002,\"dateTime\":\"2015-05-31T20:00:00\",\"description\":\"TestMeal\",\"calories\":510}"))
+        Meal meal = new Meal(of(2015, Month.MAY, 31, 20, 0), "UpdatedMeal", 500);
+        meal.setId(100002);
+        mockMvc.perform(put("/rest/meals/update/100002").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.writeValue(meal)))
                 .andExpect(status().isOk());
+
+        ResultActions result = mockMvc.perform(get("/rest/meals/get/100002"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        Meal updatedMeal = JsonUtil.readValue(result.andReturn().getResponse().getContentAsString(), Meal.class);
+        MATCHER.assertEquals(meal, updatedMeal);
     }
 
     @Test
     public void testGetBetween() throws Exception {
-        mockMvc.perform(get("/rest/meals/getBetween/2015-05-31T09:00/2015-05-31T21:00"))
+        ResultActions result = mockMvc.perform(get("/rest/meals/getBetween?start=2015-05-31T09:00&end=2015-05-31T21:00"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("[{\"id\":100007,\"dateTime\":\"2015-05-31T20:00:00\",\"description\":\"Ужин\",\"calories\":510,\"exceed\":true},{\"id\":100006,\"dateTime\":\"2015-05-31T13:00:00\",\"description\":\"Обед\",\"calories\":1000,\"exceed\":true},{\"id\":100005,\"dateTime\":\"2015-05-31T10:00:00\",\"description\":\"Завтрак\",\"calories\":500,\"exceed\":true}]"));
+                .andExpect(status().isOk());
+        List<MealWithExceed> meals = JsonUtil.readValues(result.andReturn().getResponse().getContentAsString(), MealWithExceed.class);
+        ModelMatcher<MealWithExceed> matcher = ModelMatcher.of(MealWithExceed.class);
+        matcher.assertCollectionEquals(MealsUtil.getWithExceeded(Arrays.asList(MEAL6, MEAL5, MEAL4), 2000), meals);
+
     }
 }
