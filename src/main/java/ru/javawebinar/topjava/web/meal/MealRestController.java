@@ -28,13 +28,13 @@ public class MealRestController extends AbstractMealController {
     }
 
     @Override
-    @GetMapping(value = "/get/{id}")
-    public Meal get(@PathVariable ("id") int id) {
+    @GetMapping(value = "/{id}")
+    public Meal get(@PathVariable("id") int id) {
         return super.get(id);
     }
 
     @Override
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/{id}")
     public void delete(@PathVariable("id") int id) {
         super.delete(id);
     }
@@ -47,7 +47,7 @@ public class MealRestController extends AbstractMealController {
 
 
     //@Override
-    @PutMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Meal> create(@RequestBody Meal meal, Model model) {
         Meal resultMeal = super.create(meal);
 
@@ -59,7 +59,7 @@ public class MealRestController extends AbstractMealController {
     }
 
     @Override
-    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void update(@RequestBody Meal meal, @PathVariable("id") int id) {
         super.update(meal, id);
     }

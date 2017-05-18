@@ -28,7 +28,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGet() throws Exception {
-        ResultActions result = mockMvc.perform(get("/rest/meals/get/100002"))
+        ResultActions result = mockMvc.perform(get("/rest/meals/100002"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -38,7 +38,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testDelete() throws Exception {
-        mockMvc.perform(delete("/rest/meals/delete/100002").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/rest/meals/100002").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -55,7 +55,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     @Test
     public void testCreate() throws Exception {
         Meal meal = new Meal(of(2015, Month.MAY, 31, 20, 0), "CreatedMeal", 500);
-        ResultActions result = mockMvc.perform(put("/rest/meals/create").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.writeValue(meal)))
+        ResultActions result = mockMvc.perform(put("/rest/meals").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.writeValue(meal)))
                 .andExpect(status().isCreated());
         Meal createdMeal = JsonUtil.readValue(result.andReturn().getResponse().getContentAsString(), Meal.class);
         meal.setId(100010);
@@ -66,10 +66,10 @@ public class MealRestControllerTest extends AbstractControllerTest {
     public void testUpdate() throws Exception {
         Meal meal = new Meal(of(2015, Month.MAY, 31, 20, 0), "UpdatedMeal", 500);
         meal.setId(100002);
-        mockMvc.perform(put("/rest/meals/update/100002").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.writeValue(meal)))
+        mockMvc.perform(put("/rest/meals/100002").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.writeValue(meal)))
                 .andExpect(status().isOk());
 
-        ResultActions result = mockMvc.perform(get("/rest/meals/get/100002"))
+        ResultActions result = mockMvc.perform(get("/rest/meals/100002"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
