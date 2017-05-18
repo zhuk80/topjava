@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 /**
  * Created by Evgeniy on 16.05.2017.
  */
@@ -28,18 +29,18 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGet() throws Exception {
-        ResultActions result = mockMvc.perform(get("/rest/meals/100002"))
+        mockMvc.perform(get("/rest/meals/100002"))
+                .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(status().isOk());
-
-        Meal meal = JsonUtil.readValue(result.andReturn().getResponse().getContentAsString(), Meal.class);
-        MATCHER.assertEquals(MEAL1, meal);
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MATCHER.contentMatcher(MEAL1));
     }
 
     @Test
     public void testDelete() throws Exception {
         mockMvc.perform(delete("/rest/meals/100002").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        MATCHER.assertCollectionEquals(Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2), mealService.getAll(100000));
     }
 
     @Test
@@ -51,6 +52,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
         ModelMatcher<MealWithExceed> matcher = ModelMatcher.of(MealWithExceed.class);
         matcher.assertCollectionEquals(MealsUtil.getWithExceeded(MEALS, 2000), meals);
     }
+
 
     @Test
     public void testCreate() throws Exception {
