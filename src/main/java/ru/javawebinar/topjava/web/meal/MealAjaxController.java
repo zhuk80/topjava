@@ -2,10 +2,8 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -32,9 +30,9 @@ public class MealAjaxController extends AbstractMealController {
 
     @PostMapping
     public void create (@RequestParam("id") Integer id,
-                               @RequestParam("dateTime") String dateTime,
-                               @RequestParam("description") String description,
-                               @RequestParam("calories") int calories) {
+                        @RequestParam("dateTime") String dateTime,
+                        @RequestParam("description") String description,
+                        @RequestParam("calories") int calories) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         Meal meal = new Meal(id, LocalDateTime.parse(dateTime, formatter), description, calories);
@@ -44,6 +42,19 @@ public class MealAjaxController extends AbstractMealController {
         } else {
             super.update(meal, id);
         }
+    }
+
+    @PostMapping(value = "/filter", consumes=MediaType.APPLICATION_JSON_VALUE)
+    public void getBetween(@RequestParam(value = "startDate", required = false) String startDate,
+                           @RequestParam(value = "startTime", required = false) String startTime,
+                           @RequestParam(value = "endDate", required = false) String endDate,
+                           @RequestParam(value = "endTime", required = false) String endTime) {
+
+        //List<MealWithExceed> mealWithExceeds = super.getBetween(startDate, startTime, endDate, endTime);
+        //String jsonMealWithExceeds = JsonUtil.writeValue(mealWithExceeds);
+        System.out.println(startDate + " " + startTime + " " + " " +  endDate + " " + endTime);
+        System.out.println();
+        //return super.getBetween(startDate, startTime, endDate, endTime);
     }
 
 }

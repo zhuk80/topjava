@@ -13,62 +13,7 @@
 
 
 
-<%--<script>
-    $('#myModal').on('show.bs.modal', function (e) {
-        var loadurl = e.relatedTarget.data('load-url');
-        $(this).find('.modal-body').load(loadurl);
-    });
-</script>--%>
-
-<div class="container">
-    <hr>
-    <a href="meals/create" class="ls-modal"><spring:message code="meals.add"/></a>
-    <a href="#" data-toggle="modal" data-load-url="meals/create" data-target="#myModal">Click me</a>
-    <hr>
-</div>
-
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" href="meals/create">
-    Launch demo modal
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-           <%-- <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-            </div>--%>
-            <%--<div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>--%>
-        </div>
-    </div>
-</div>
-
-
-<div class="container">
-    <div class="row">
-        <div class='col-sm-6'>
-            <input type='text' class="form-control" id='datetimepicker4' />
-        </div>
-        <script type="text/javascript">
-            $(function () {
-                $('#datetimepicker4').datetimepicker();
-            });
-        </script>
-    </div>
-</div>
-
-
-
-
-<div class="container">
+<%--<div class="container">
     <div class="shadow">
         <h3><spring:message code="meals.title"/></h3>
 
@@ -115,8 +60,8 @@
                     <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealWithExceed"/>
                     <tr class="${meal.exceed ? 'exceeded' : 'normal'}">
                         <td>
-                                <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
-                                <%--<%=TimeUtil.toString(meal.getDateTime())%>--%>
+                                &lt;%&ndash;${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}&ndash;%&gt;
+                                &lt;%&ndash;<%=TimeUtil.toString(meal.getDateTime())%>&ndash;%&gt;
                                 ${fn:formatDateTime(meal.dateTime)}
                         </td>
                         <td>${meal.description}</td>
@@ -126,7 +71,82 @@
                             <a class="btn btn-xs btn-danger delete" id="${meal.id}">
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                         </a>
-                            <%--<a href="meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a>--%>
+                            &lt;%&ndash;<a href="meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a>&ndash;%&gt;
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
+
+        </div>
+    </div>
+</div>--%>
+
+<div class="container">
+    <div id="filter">
+    <%--<form class="form-horizontal" onsubmit="return filter_submit();" id="filterForm">--%>
+        <%--<form method="post" action="meals/filter">--%>
+        <form method = "post" id = "filterForm" name = "filterForm">
+        <dl>
+            <dt><spring:message code="meals.startDate"/>:</dt>
+            <dd><input type="date" name="startDate" value="${param.startDate}" id="startDate"></dd>
+        </dl>
+        <dl>
+            <dt><spring:message code="meals.endDate"/>:</dt>
+            <dd><input type="date" name="endDate" value="${param.endDate}" id="endDate"></dd>
+        </dl>
+        <dl>
+            <dt><spring:message code="meals.startTime"/>:</dt>
+            <dd><input type="time" name="startTime" value="${param.startTime}" id="startTime"></dd>
+        </dl>
+        <dl>
+            <dt><spring:message code="meals.endTime"/>:</dt>
+            <dd><input type="time" name="endTime" value="${param.endTime}" id="endTime"></dd>
+        </dl>
+        <button type="button" onClick="filter_submit()"><spring:message code="meals.filter"/></button>
+    </form>
+</div>
+</div>
+
+
+<div class="container">
+    <div class="shadow">
+        <h3><spring:message code="meals.title"/></h3>
+
+        <%--<div id="filter-form">--%>
+
+        <%--</div>--%>
+
+        <div class="view-box">
+            <a class="btn btn-info" onclick="add()">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </a>
+
+            <table class="table table-striped display" id="datatable">
+                <thead>
+                <tr>
+                    <th><spring:message code="meals.dateTime"/></th>
+                    <th><spring:message code="meals.description"/></th>
+                    <th><spring:message code="meals.calories"/></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <c:forEach items="${meals}" var="meal">
+                    <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealWithExceed"/>
+                    <tr class="${meal.exceed ? 'exceeded' : 'normal'}">
+                        <td>
+                                <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
+                                <%--<%=TimeUtil.toString(meal.getDateTime())%>--%>
+                                ${fn:formatDateTime(meal.dateTime)}
+                        </td>
+                        <td>${meal.description}</td>
+                        <td>${meal.calories}</td>
+                        <td><a href="meals/update?id=${meal.id}"><spring:message code="common.update"/></a></td>
+                        <td>
+                            <a class="btn btn-xs btn-danger delete" id="${meal.id}">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </a>
+                                <%--<a href="meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a>--%>
                         </td>
                     </tr>
                 </c:forEach>
@@ -183,7 +203,6 @@
         </div>
     </div>
 </div>
-
 
 
 
