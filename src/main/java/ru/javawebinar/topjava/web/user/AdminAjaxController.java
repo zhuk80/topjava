@@ -30,6 +30,7 @@ public class AdminAjaxController extends AbstractUserController {
         super.delete(id);
     }
 
+
     @PostMapping
     public void createOrUpdate(@RequestParam("id") Integer id,
                                @RequestParam("name") String name,
@@ -42,5 +43,13 @@ public class AdminAjaxController extends AbstractUserController {
         } else {
             super.update(user, id);
         }
+    }
+
+    @PostMapping ("/setEnabled")
+    public void enable(@RequestParam("id") int id,
+                       @RequestParam("isEnabled") boolean isEnabled) {
+        User user = super.get(id);
+        user.setEnabled(isEnabled);
+        super.update(user, id);
     }
 }
