@@ -49,6 +49,7 @@ function save() {
             $('#editRow').modal('hide');
             updateTable();
             successNoty('Saved');
+            filter_submit();
         }
     });
 }

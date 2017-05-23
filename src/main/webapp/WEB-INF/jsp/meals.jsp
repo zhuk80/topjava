@@ -103,6 +103,7 @@
             <dd><input type="time" name="endTime" value="${param.endTime}" id="endTime"></dd>
         </dl>
         <button type="button" onClick="filter_submit()"><spring:message code="meals.filter"/></button>
+        <button type="button" onClick="filter_clear()">Clear</button>
     </form>
 </div>
 </div>
