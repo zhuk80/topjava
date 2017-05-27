@@ -35,21 +35,21 @@ $(function () {
     makeEditable();
 });
 
-function filter_submit() {
+function filterSubmit() {
 
         var form = $('#filterForm');
-        alert(form.serialize());
+        //alert(form.serialize());
         $.ajax({
             type: "POST",
             url: "ajax/meals/filter",
             data: form.serialize(),
             success: function (data) {
 
-                var table = $('#datatable').DataTable();
-                table.clear();
+                //var table = $('#datatable').DataTable();
+                datatableApi.clear();
 
                for (var i = 0; i < data.length; i++) {
-                   table.row.add ( {
+                   datatableApi.row.add ( {
                        "dateTime" : data[i].dateTime,
                        "description" : data[i].description,
                        "calories" : data[i].calories,
@@ -58,7 +58,7 @@ function filter_submit() {
                    })
 
                 }
-                table.draw();
+                datatableApi.draw();
 
                 console.log("SUCCESS: ", data);
                 display(data);
@@ -72,11 +72,11 @@ function display(data) {
     $('#feedback').html(json);
 }
 
-function filter_clear() {
+function filterClear() {
 
-    alert(document.getElementById("filterForm").files.length == 0);
+    //alert(document.getElementById("filterForm").files.length == 0);
     document.getElementById("filterForm").reset();
-    alert(document.getElementById("filterForm").files.length == 0);
+    //alert(document.getElementById("filterForm").files.length == 0);
     var form = "startDate=&endDate=&startTime=&endTime=";
     $.ajax({
         type: "POST",
@@ -87,11 +87,11 @@ function filter_clear() {
             /*var json = JSON.stringify(data);
              console.log(json);*/
 
-            var table = $('#datatable').DataTable();
+            //var table = $('#datatable').DataTable();
             table.clear();
 
             for (var i = 0; i < data.length; i++) {
-                table.row.add({
+                datatableApi.row.add({
                     "dateTime": data[i].dateTime,
                     "description": data[i].description,
                     "calories": data[i].calories,
@@ -100,7 +100,7 @@ function filter_clear() {
                 })
 
             }
-            table.draw();
+            datatableApi.draw();
 
             console.log("SUCCESS: ", data);
             display(data);
@@ -108,7 +108,7 @@ function filter_clear() {
     });
 }
 
-function filter_check () {
+function filterCheck () {
     var form = $('#filterForm');
     alert(form.serialize());
 }

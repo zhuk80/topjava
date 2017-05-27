@@ -42,7 +42,7 @@ $(function () {
 
     $(".chcktbl1").click(function () {
 
-        var table = $('#datatable').DataTable();
+        //var table = $('#datatable').DataTable();
         var id = $(this).attr("id");
         var isChecked = $(this).is(":checked");
 
@@ -55,10 +55,6 @@ $(function () {
             },
             success: function (response) {
                 updateTable();
-                if (response != 0) {
-                    alert("Data Update Successfully!!!!");
-                    location.reload();
-                }
             },
             error: function (response) {
                 if (response != 1) {
