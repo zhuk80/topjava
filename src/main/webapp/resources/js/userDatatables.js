@@ -40,7 +40,7 @@ $(function () {
     });
     makeEditable();
 
-    $(".chcktbl1").click(function () {
+    $(".checkTable").click(function () {
 
         //var table = $('#datatable').DataTable();
         var id = $(this).attr("id");
