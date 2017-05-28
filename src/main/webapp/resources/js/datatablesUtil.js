@@ -1,14 +1,22 @@
-var form;
-
 function makeEditable() {
-    form = $('#detailsForm');
-    $(document).ajaxError(function (event, jqXHR, options, jsExc) {
-        failNoty(event, jqXHR, options, jsExc);
+    $('.delete').click(function () {
+        deleteRow($(this).attr("id"));
     });
+
+    $('#detailsForm').submit(function () {
+        save();
+        return false;
+    });
+
+    $(document).ajaxError(function (event, jqXHR, options, jsExc) {
+        failNoty(jqXHR);
+    });
+    // solve problem with cache in IE: https://stackoverflow.com/a/4303862/548473
+    $.ajaxSetup({ cache: false });
 }
 
 function add() {
-    form.find(":input").val("");
+    $('#id').val(null);
     $('#editRow').modal();
 }
 
@@ -23,11 +31,18 @@ function deleteRow(id) {
     });
 }
 
-function updateTableByData(data) {
-    datatableApi.clear().rows.add(data).draw();
+function updateTable() {
+    $.get(ajaxUrl, function (data) {
+        datatableApi.clear();
+        $.each(data, function (key, item) {
+            datatableApi.row.add(item);
+        });
+        datatableApi.draw();
+    });
 }
 
 function save() {
+    var form = $('#detailsForm');
     $.ajax({
         type: "POST",
         url: ajaxUrl,
@@ -59,10 +74,10 @@ function successNoty(text) {
     });
 }
 
-function failNoty(event, jqXHR, options, jsExc) {
+function failNoty(jqXHR) {
     closeNoty();
     failedNote = noty({
-        text: 'Failed: ' + jqXHR.statusText + "<br>",
+        text: 'Error status: ' + jqXHR.status,
         type: 'error',
         layout: 'bottomRight'
     });
