@@ -73,7 +73,7 @@ abstract public class AbstractServiceTest {
         results.setLength(0);
     }
 
-    //  Check root cause in JUnit: https://github08-rest-test-jackson.com/junit-team/junit4/pull/778
+    //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778
     public static <T extends Throwable> void validateRootCause(Runnable runnable, Class<T> exceptionClass) {
         try {
             runnable.run();
