@@ -41,6 +41,7 @@ function updateTableByData(data) {
 }
 
 function save() {
+    form[0][1]["value"] = form[0][1]["value"].substring(0,16);
     $.ajax({
         type: "POST",
         url: ajaxUrl,
