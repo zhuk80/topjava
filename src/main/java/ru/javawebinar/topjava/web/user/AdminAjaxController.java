@@ -45,7 +45,10 @@ public class AdminAjaxController extends AbstractUserController {
     @PostMapping
     public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo, BindingResult result) {
 
-        if (ValidationUtil.checkResult(result) != null) return ValidationUtil.checkResult(result);
+        ResponseEntity<String> responseEntity = ValidationUtil.checkResult(result);
+        if (responseEntity != null)
+            return responseEntity;
+
         if (userTo.isNew()) {
             super.create(UserUtil.createNewFromTo(userTo));
         } else {

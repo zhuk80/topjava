@@ -1,12 +1,12 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <head>
     <script type="text/javascript">
         var i18n = [];
 
-    i18n['common.deleted'] = '<spring:message code="common.deleted"/>';
-    i18n['common.saved'] = '<spring:message code="common.saved"/>';
-    i18n['common.enabled'] = '<spring:message code="common.enabled"/>';
-    i18n['common.disabled'] = '<spring:message code="common.disabled"/>';
-    i18n['common.errorStatus'] = '<spring:message code="common.errorStatus"/>';
+        <c:forEach var='key' items='<%=new String[]{"common.deleted","common.saved","common.enabled","common.disabled","common.errorStatus"}%>'>
+        i18n['${key}'] = '<spring:message code="${key}"/>';
+        </c:forEach>
+
     </script>
 </head>

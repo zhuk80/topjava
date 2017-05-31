@@ -41,7 +41,9 @@ public class MealAjaxController extends AbstractMealController {
     @PostMapping
     public ResponseEntity<String> createOrUpdate(@Valid MealTo mealTo, BindingResult result) {
 
-        if (ValidationUtil.checkResult(result) != null) return ValidationUtil.checkResult(result);
+        ResponseEntity<String> responseEntity = ValidationUtil.checkResult(result);
+        if (responseEntity != null)
+            return responseEntity;
         if (mealTo.isNew()) {
             super.create(MealsUtil.createNewFromTo(mealTo));
         } else {
