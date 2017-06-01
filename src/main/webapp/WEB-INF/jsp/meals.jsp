@@ -101,11 +101,11 @@
                     <input type="hidden" id="id" name="id">
 
                     <div class="form-group">
-                        <label for="dateTime" class="control-label col-xs-3"><spring:message
+                        <label for="datetimepickerEdit" class="control-label col-xs-3"><spring:message
                                 code="meals.dateTime"/></label>
 
                         <div class="col-xs-9">
-                            <input type="datetime-local" class="form-control" id="dateTime" name="dateTime"
+                            <input type="text" class="form-control" id="datetimepickerEdit" name="dateTime"
                                    placeholder="<spring:message code="meals.dateTime"/>">
                         </div>
                     </div>

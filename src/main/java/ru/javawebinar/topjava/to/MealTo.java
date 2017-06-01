@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Created by Evgeniy on 28.05.2017.
@@ -17,7 +18,7 @@ public class MealTo implements Serializable {
 
     private Integer id;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime dateTime;
 
     @NotBlank
@@ -73,9 +74,3 @@ public class MealTo implements Serializable {
         return calories;
     }
 }
-
-
-/*
-dateTime:2017-05-31T12:12
-        description:фыафы
-        calories:1000*/

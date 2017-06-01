@@ -36,6 +36,9 @@ $(function () {
         datepicker:false,
         format:'H:i'
     });
+    $('#datetimepickerEdit').datetimepicker({
+        format:'Y-m-d H:i'
+    });
     datatableApi = $("#datatable").DataTable({
         "ajax": {
             "url": ajaxUrl,

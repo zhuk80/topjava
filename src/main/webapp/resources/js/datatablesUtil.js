@@ -19,7 +19,12 @@ function updateRow(id) {
     $('#modalTitle').html(i18n["editTitle"]);
     $.get(ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
+            if (key == "dateTime") {
+                value = value.substring(0, 16).replace("T", " ");
+            }
             form.find("input[name='" + key + "']").val(value);
+            //debugger;
+
         });
         $('#editRow').modal();
     });
@@ -41,11 +46,14 @@ function updateTableByData(data) {
 }
 
 function save() {
-    form[0][1]["value"] = form[0][1]["value"].substring(0,16);
     $.ajax({
         type: "POST",
         url: ajaxUrl,
-        data: form.serialize(),
+        data: {id: form[0][0]["value"],
+            dateTime: form[0][1]["value"].substring(0,10) + "T" + form[0][1]["value"].substring(11,16),
+            description: form[0][2]["value"],
+            calories: form[0][3]["value"]
+        },
         success: function () {
             $('#editRow').modal('hide');
             updateTable();
