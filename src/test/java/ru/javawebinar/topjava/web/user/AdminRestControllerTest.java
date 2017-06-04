@@ -110,6 +110,19 @@ public class AdminRestControllerTest extends AbstractControllerTest {
         MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, expected, USER), userService.getAll());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateInvalid() throws Exception {
+        User expectedWithErrors = new User(null, null, "new@gmail.com", "newPass", 230000, Role.ROLE_USER, Role.ROLE_ADMIN);
+        ResultActions action = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                //.content(JsonUtil.writeValue(expectedWithErrors))
+                .content(JsonUtil.writeValue(expectedWithErrors)))
+                .andExpect(status().isUnprocessableEntity());
+
+        User returned = MATCHER.fromJsonAction(action);
+    }
+
     @Test
     public void testGetAll() throws Exception {
         TestUtil.print(mockMvc.perform(get(REST_URL)

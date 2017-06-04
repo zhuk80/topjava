@@ -1,13 +1,17 @@
 package ru.javawebinar.topjava.web.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -34,7 +38,12 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createWithLocation(@RequestBody User user) {
+    public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user, BindingResult result) {
+        if (result.hasErrors()) {
+            if (ValidationUtil.getErrorResponse(result).getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
+                ValidationUtil.gerErrorCodesMessagesRest(result);
+            }
+        }
         User created = super.create(user);
 
 //        HttpHeaders httpHeaders = new HttpHeaders();
@@ -53,9 +62,14 @@ public class AdminRestController extends AbstractUserController {
         super.delete(id);
     }
 
-    @Override
+    //@Override
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void update(@RequestBody User user, @PathVariable("id") int id) {
+    public void update(@Valid @RequestBody User user, @PathVariable("id") int id, BindingResult result) {
+        if (result.hasErrors()) {
+            if (ValidationUtil.getErrorResponse(result).getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
+                ValidationUtil.gerErrorCodesMessagesRest(result);
+            }
+        }
         super.update(user, id);
     }
 

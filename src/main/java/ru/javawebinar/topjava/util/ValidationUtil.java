@@ -3,8 +3,12 @@ package ru.javawebinar.topjava.util;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import ru.javawebinar.topjava.HasId;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.util.exception.ValidationException;
+
+import java.util.List;
 
 public class ValidationUtil {
     private ValidationUtil() {
@@ -48,6 +52,24 @@ public class ValidationUtil {
         StringBuilder sb = new StringBuilder();
         result.getFieldErrors().forEach(fe -> sb.append(fe.getField()).append(" ").append(fe.getDefaultMessage()).append("<br>"));
         return new ResponseEntity<>(sb.toString(), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    public static void gerErrorCodesMessages(BindingResult result) {
+        List<FieldError> errors = result.getFieldErrors();
+        String errorString = "";
+        for (FieldError error : errors) {
+            errorString = errorString + error.getField() + " " + error.getDefaultMessage() + "<br>";
+        }
+        throw new ValidationException(errorString);
+    }
+
+    public static void gerErrorCodesMessagesRest(BindingResult result) {
+        List<FieldError> errors = result.getFieldErrors();
+        String errorString = "";
+        for (FieldError error : errors) {
+            errorString = errorString + error.getField() + " " + error.getDefaultMessage() + "; ";
+        }
+        throw new ValidationException(errorString);
     }
 
     //    http://stackoverflow.com/a/28565320/548473

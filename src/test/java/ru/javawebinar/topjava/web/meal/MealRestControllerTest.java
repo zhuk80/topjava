@@ -99,6 +99,18 @@ public class MealRestControllerTest extends AbstractControllerTest {
         MATCHER.assertCollectionEquals(Arrays.asList(ADMIN_MEAL2, created, ADMIN_MEAL1), service.getAll(ADMIN_ID));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateInvalid() throws Exception {
+        Meal created = getCreatedWithNullDate();
+        ResultActions action = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(created))
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isUnprocessableEntity());
+
+        Meal returned = MATCHER.fromJsonAction(action);
+    }
+
     @Test
     public void testGetAll() throws Exception {
         mockMvc.perform(get(REST_URL)

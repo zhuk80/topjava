@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.util.exception.ValidationException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,6 +31,13 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseBody
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
+        return logAndGetErrorInfo(req, e, true);
+    }
+
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
+    @ExceptionHandler(ValidationException.class)
+    @ResponseBody
+    public ErrorInfo unprocessableEntity(HttpServletRequest req, ValidationException e) {
         return logAndGetErrorInfo(req, e, true);
     }
 
