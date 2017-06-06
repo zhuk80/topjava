@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web.meal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.View;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.UserFormValidator;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
 import javax.validation.Valid;
@@ -23,6 +25,9 @@ import java.util.List;
 @RequestMapping(value = MealRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MealRestController extends AbstractMealController {
     static final String REST_URL = "/rest/profile/meals";
+
+    @Autowired
+    private UserFormValidator userFormValidator;
 
     @Override
     @GetMapping("/{id}")
@@ -55,6 +60,7 @@ public class MealRestController extends AbstractMealController {
                 ValidationUtil.gerErrorCodesMessagesRest(result);
             }
         }
+        userFormValidator.validate(meal, result);
         Meal created = super.create(meal);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()

@@ -56,7 +56,7 @@ public class AdminAjaxController extends AbstractUserController {
 
     @PostMapping
     public void createOrUpdate(@Valid UserTo userTo, BindingResult result) {
-        if (userTo.getEmail().equals(AuthorizedUser.get().getUserTo().getEmail())) throw new DataIntegrityViolationException("User with this email already present in application");
+        if (userTo.getEmail().equals(AuthorizedUser.get().getUserTo().getEmail())) throw new DataIntegrityViolationException(result.getFieldError().getField() + " " + result.getFieldError().getDefaultMessage());
         if (result.hasErrors()) {
             if (ValidationUtil.getErrorResponse(result).getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
                 ValidationUtil.gerErrorCodesMessages(result);

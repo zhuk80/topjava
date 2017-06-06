@@ -13,6 +13,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.util.exception.ValidationException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 
 @ControllerAdvice(annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
@@ -31,13 +32,21 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseBody
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        return logAndGetErrorInfo(req, e, true);
+        DataIntegrityViolationException exception = new DataIntegrityViolationException("User with this email already present in application");
+        return logAndGetErrorInfo(req, exception, true);
     }
 
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
     @ExceptionHandler(ValidationException.class)
     @ResponseBody
-    public ErrorInfo unprocessableEntity(HttpServletRequest req, ValidationException e) {
+    public ErrorInfo conflict(HttpServletRequest req, ValidationException e) {
+        return logAndGetErrorInfo(req, e, true);
+    }
+
+    @ResponseStatus(value = HttpStatus.CONFLICT)  // 422
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseBody
+    public ErrorInfo conflict(HttpServletRequest req, ConstraintViolationException e) {
         return logAndGetErrorInfo(req, e, true);
     }
 

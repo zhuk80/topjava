@@ -7,10 +7,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.javawebinar.topjava.AuthorizedUser;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 
+import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.UserTo;
+
+import java.util.List;
 
 /**
  * Created by evgeniy on 05.06.2017.
@@ -20,14 +24,17 @@ public class UserFormValidator implements Validator {
 
     private final UserService service;
 
+    private final MealService mealService;
+
     @Autowired
-    public UserFormValidator(UserService service) {
+    public UserFormValidator(UserService service, MealService mealService) {
         this.service = service;
+        this.mealService = mealService;
     }
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return UserTo.class.equals(clazz) || User.class.equals(clazz);
+        return UserTo.class.equals(clazz) || User.class.equals(clazz) || Meal.class.equals(clazz);
     }
 
     @Override
@@ -60,6 +67,15 @@ public class UserFormValidator implements Validator {
             }
             if (byEmail != null && userTo.isNew() && AuthorizedUser.safeGet() != null && !service.getByEmail(userTo.getEmail()).getId().equals(AuthorizedUser.id())) {
                 throw new DataIntegrityViolationException("User with this email already present in application");
+            }
+        }
+        else if (target instanceof Meal) {
+            Meal meal = (Meal) target;
+            List<Meal> meals = mealService.getAll(AuthorizedUser.id());
+            if (meal.getDateTime() != null){
+                for (Meal existingMeal : meals) {
+                    if (meal.getDateTime().equals(existingMeal.getDateTime())) throw new DataIntegrityViolationException("You already has meal with the same date/time");
+                }
             }
         }
     }

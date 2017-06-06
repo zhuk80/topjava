@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.web.meal;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.View;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.UserFormValidator;
 import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.util.exception.ValidationException;
 
@@ -21,6 +23,9 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/ajax/profile/meals")
 public class MealAjaxController extends AbstractMealController {
+
+    @Autowired
+    private UserFormValidator userFormValidator;
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,6 +54,7 @@ public class MealAjaxController extends AbstractMealController {
                 ValidationUtil.gerErrorCodesMessages(result);
             }
         }
+        userFormValidator.validate(meal, result);
         if (meal.isNew()) {
             super.create(meal);
         } else {

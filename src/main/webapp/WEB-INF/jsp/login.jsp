@@ -20,6 +20,7 @@
                 <button type="submit" class="btn btn-success">
                     <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
                 </button>
+                <a href="/login?locale=en">English</a>|<a href="/login?locale=ru">Russian</a>
             </form:form>
         </div>
     </div>

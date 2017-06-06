@@ -18,6 +18,7 @@ import ru.javawebinar.topjava.util.UserUtil;
 import ru.javawebinar.topjava.web.user.AbstractUserController;
 
 import javax.validation.Valid;
+import java.util.Locale;
 
 @Controller
 public class RootController extends AbstractUserController {
@@ -31,34 +32,34 @@ public class RootController extends AbstractUserController {
     }
 
     @GetMapping("/")
-    public String root() {
+    public String root(Locale locale) {
         return "redirect:meals";
     }
 
     //    @Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
-    public String users() {
+    public String users(Locale locale) {
         return "users";
     }
 
     @GetMapping(value = "/login")
-    public String login() {
+    public String login(Locale locale) {
         return "login";
     }
 
     @GetMapping("/meals")
-    public String meals() {
+    public String meals(Locale locale) {
         return "meals";
     }
 
     @GetMapping("/profile")
-    public String profile() {
+    public String profile(Locale locale) {
         return "profile";
     }
 
     @PostMapping("/profile")
-    public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
+    public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status, Locale locale) {
         if (result.hasErrors()) {
             return "profile";
         } else {
@@ -71,21 +72,21 @@ public class RootController extends AbstractUserController {
     }
 
     @GetMapping("/register")
-    public String register(ModelMap model) {
+    public String register(ModelMap model, Locale locale) {
         model.addAttribute("userTo", new UserTo());
         model.addAttribute("register", true);
         return "profile";
     }
 
     @PostMapping("/register")
-    public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
+    public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model, Locale locale) {
         User byEmail = null;
         try {
             byEmail = super.getByMail(userTo.getEmail());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (byEmail != null && byEmail.getEmail().equals(userTo.getEmail())) throw new DataIntegrityViolationException("User with this email already present in application");
+        if (byEmail != null && byEmail.getEmail().equals(userTo.getEmail())) throw new DataIntegrityViolationException(result.getFieldError().getField() + " " + result.getFieldError().getDefaultMessage());
         if (result.hasErrors()) {
             model.addAttribute("register", true);
             return "profile";

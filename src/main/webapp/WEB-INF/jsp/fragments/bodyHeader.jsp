@@ -18,6 +18,7 @@
                         <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
                     </button>
                 </sec:authorize>
+                <a href="?locale=en">English</a>|<a href="?locale=ru">Russian</a>
             </form:form>
         </div>
     </div>
