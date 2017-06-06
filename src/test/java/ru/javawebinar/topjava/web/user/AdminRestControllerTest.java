@@ -6,6 +6,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.util.exception.ValidationException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
@@ -37,7 +38,7 @@ public class AdminRestControllerTest extends AbstractControllerTest {
     @Test
     public void testGetNotFound() throws Exception {
         mockMvc.perform(get(REST_URL + 1)
-                .with(TestUtil.userHttpBasic(ADMIN)))
+                .with(userHttpBasic(ADMIN)))
                 .andExpect(status().isUnprocessableEntity())
                 .andDo(print());
     }
@@ -63,7 +64,7 @@ public class AdminRestControllerTest extends AbstractControllerTest {
     @Test
     public void testDeleteNotFound() throws Exception {
         mockMvc.perform(delete(REST_URL + 1)
-                .with(TestUtil.userHttpBasic(ADMIN)))
+                .with(userHttpBasic(ADMIN)))
                 .andExpect(status().isUnprocessableEntity())
                 .andDo(print());
     }
@@ -96,6 +97,19 @@ public class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testUpdateConflict() throws Exception {
+        User updated = new User(USER);
+        updated.setName("UpdatedName");
+        updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
+        updated.setEmail("admin@gmail.com");
+        mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
     public void testCreate() throws Exception {
         User expected = new User(null, "New", "new@gmail.com", "newPass", 2300, Role.ROLE_USER, Role.ROLE_ADMIN);
         ResultActions action = mockMvc.perform(post(REST_URL)
@@ -110,7 +124,7 @@ public class AdminRestControllerTest extends AbstractControllerTest {
         MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, expected, USER), userService.getAll());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateInvalid() throws Exception {
         User expectedWithErrors = new User(null, null, "new@gmail.com", "newPass", 230000, Role.ROLE_USER, Role.ROLE_ADMIN);
         ResultActions action = mockMvc.perform(post(REST_URL)
@@ -120,7 +134,17 @@ public class AdminRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(expectedWithErrors)))
                 .andExpect(status().isUnprocessableEntity());
 
-        User returned = MATCHER.fromJsonAction(action);
+        //User returned = MATCHER.fromJsonAction(action);
+    }
+
+    @Test
+    public void testCreateDuplicateEmail() throws Exception {
+        User expectedWithErrors = new User(null, "New", "admin@gmail.com", "newPass", 2300, Role.ROLE_USER, Role.ROLE_ADMIN);
+        ResultActions action = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(expectedWithErrors)))
+                .andExpect(status().isConflict());
     }
 
     @Test

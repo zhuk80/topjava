@@ -1,14 +1,17 @@
 package ru.javawebinar.topjava.web.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
+import ru.javawebinar.topjava.util.UserFormValidator;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
 import javax.validation.Valid;
@@ -19,6 +22,9 @@ import java.util.List;
 @RequestMapping(AdminRestController.REST_URL)
 public class AdminRestController extends AbstractUserController {
     static final String REST_URL = "/rest/admin/users";
+
+    @Autowired
+    private UserFormValidator userFormValidator;
 
     @Autowired
     public AdminRestController(UserService service) {
@@ -39,11 +45,13 @@ public class AdminRestController extends AbstractUserController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user, BindingResult result) {
+        if (user.getEmail().equals(AuthorizedUser.get().getUserTo().getEmail())) throw new DataIntegrityViolationException("User with this email already present in application");
         if (result.hasErrors()) {
             if (ValidationUtil.getErrorResponse(result).getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
                 ValidationUtil.gerErrorCodesMessagesRest(result);
             }
         }
+        userFormValidator.validate(user, result);
         User created = super.create(user);
 
 //        HttpHeaders httpHeaders = new HttpHeaders();
@@ -70,6 +78,7 @@ public class AdminRestController extends AbstractUserController {
                 ValidationUtil.gerErrorCodesMessagesRest(result);
             }
         }
+        userFormValidator.validate(user, result);
         super.update(user, id);
     }
 
