@@ -32,39 +32,42 @@ public class RootController extends AbstractUserController {
     }
 
     @GetMapping("/")
-    public String root(Locale locale) {
+    public String root() {
         return "redirect:meals";
     }
 
     //    @Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
-    public String users(Locale locale) {
+    public String users() {
         return "users";
     }
 
     @GetMapping(value = "/login")
-    public String login(Locale locale) {
+    public String login() {
         return "login";
     }
 
     @GetMapping("/meals")
-    public String meals(Locale locale) {
+    public String meals() {
         return "meals";
     }
 
     @GetMapping("/profile")
-    public String profile(Locale locale) {
+    public String profile() {
         return "profile";
     }
 
     @PostMapping("/profile")
-    public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status, Locale locale) {
+    public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
         if (result.hasErrors()) {
             return "profile";
         } else {
             userFormValidator.validate(userTo, result);
-            super.update(userTo, AuthorizedUser.id());
+            if (result.hasErrors()){
+                return "profile";
+            }
+            //super.update(userTo, AuthorizedUser.id());
             AuthorizedUser.get().update(userTo);
             status.setComplete();
             return "redirect:meals";
@@ -72,27 +75,22 @@ public class RootController extends AbstractUserController {
     }
 
     @GetMapping("/register")
-    public String register(ModelMap model, Locale locale) {
+    public String register(ModelMap model) {
         model.addAttribute("userTo", new UserTo());
         model.addAttribute("register", true);
         return "profile";
     }
 
     @PostMapping("/register")
-    public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model, Locale locale) {
-        User byEmail = null;
-        try {
-            byEmail = super.getByMail(userTo.getEmail());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (byEmail != null && byEmail.getEmail().equals(userTo.getEmail())) throw new DataIntegrityViolationException(result.getFieldError().getField() + " " + result.getFieldError().getDefaultMessage());
+    public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
         if (result.hasErrors()) {
             model.addAttribute("register", true);
             return "profile";
         } else {
             userFormValidator.validate(userTo, result);
-            super.create(UserUtil.createNewFromTo(userTo));
+            if (result.hasErrors()){
+                return "profile";
+            }
             status.setComplete();
             return "redirect:login?message=app.registered&username=" + userTo.getEmail();
         }

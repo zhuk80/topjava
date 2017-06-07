@@ -2,20 +2,13 @@ package ru.javawebinar.topjava.web.meal;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.View;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.UserFormValidator;
-import ru.javawebinar.topjava.util.ValidationUtil;
-import ru.javawebinar.topjava.util.exception.ValidationException;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -48,13 +41,13 @@ public class MealAjaxController extends AbstractMealController {
     }
 
     @PostMapping
-    public void createOrUpdate(@Validated(View.ValidatedUI.class) Meal meal, BindingResult result) {
-        if (result.hasErrors()) {
+    public void createOrUpdate(@Validated(View.ValidatedUI.class) Meal meal) {
+        /*if (result.hasErrors()) {
             if (ValidationUtil.getErrorResponse(result).getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
                 ValidationUtil.gerErrorCodesMessages(result);
             }
         }
-        userFormValidator.validate(meal, result);
+        userFormValidator.validate(meal, result);*/
         if (meal.isNew()) {
             super.create(meal);
         } else {

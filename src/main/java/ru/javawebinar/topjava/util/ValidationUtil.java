@@ -54,7 +54,7 @@ public class ValidationUtil {
         return new ResponseEntity<>(sb.toString(), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    public static void gerErrorCodesMessages(BindingResult result) {
+    /*public static void gerErrorCodesMessages(BindingResult result) {
         List<FieldError> errors = result.getFieldErrors();
         String errorString = "";
         for (FieldError error : errors) {
@@ -70,7 +70,7 @@ public class ValidationUtil {
             errorString = errorString + error.getField() + " " + error.getDefaultMessage() + "; ";
         }
         throw new ValidationException(errorString);
-    }
+    }*/
 
     //    http://stackoverflow.com/a/28565320/548473
     public static Throwable getRootCause(Throwable t) {

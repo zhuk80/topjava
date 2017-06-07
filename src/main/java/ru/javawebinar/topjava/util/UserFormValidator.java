@@ -16,6 +16,9 @@ import ru.javawebinar.topjava.to.UserTo;
 
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.checkIdConsistent;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
+
 /**
  * Created by evgeniy on 05.06.2017.
  */
@@ -39,7 +42,7 @@ public class UserFormValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        if (target instanceof User) {
+       /* if (target instanceof User) {
             User user = (User) target;
             User byEmail = null;
             try {
@@ -51,9 +54,34 @@ public class UserFormValidator implements Validator {
                 throw new DataIntegrityViolationException("User with this email already present in application");
             }
         }
-        else if (target instanceof UserTo) {
+        else */if (target instanceof UserTo) {
             UserTo userTo = (UserTo) target;
-            User byEmail = null;
+
+            if (AuthorizedUser.safeGet() != null) {
+                checkIdConsistent(userTo, AuthorizedUser.id());
+                try {
+                    service.update(userTo);
+                } catch (DataIntegrityViolationException e) {
+                    //throw new DataIntegrityViolationException("User with this email already present in application");
+                    errors.rejectValue("email", "users.emailExists");
+                }
+            }
+            else {
+                User user = UserUtil.createNewFromTo(userTo);
+                checkNew(user);
+                try {
+                service.save(user);
+                } catch (DataIntegrityViolationException e) {
+                    //throw new DataIntegrityViolationException("User with this email already present in application");
+                    errors.rejectValue("email", "users.emailExists");
+                }
+            }
+
+
+            //AuthorizedUser.get().update(userTo);
+
+            //service.create(UserUtil.createNewFromTo(userTo));
+            /*User byEmail = null;
             try {
                 byEmail = service.getByEmail(userTo.getEmail());
             } catch (Exception e) {
@@ -67,7 +95,7 @@ public class UserFormValidator implements Validator {
             }
             if (byEmail != null && userTo.isNew() && AuthorizedUser.safeGet() != null && !service.getByEmail(userTo.getEmail()).getId().equals(AuthorizedUser.id())) {
                 throw new DataIntegrityViolationException("User with this email already present in application");
-            }
+            }*/
         }
         else if (target instanceof Meal) {
             Meal meal = (Meal) target;

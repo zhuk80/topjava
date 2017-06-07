@@ -54,13 +54,13 @@ public class MealRestController extends AbstractMealController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Meal> createWithLocation(@Validated(View.ValidatedUI.class) @RequestBody Meal meal, BindingResult result) {
-        if (result.hasErrors()) {
+    public ResponseEntity<Meal> createWithLocation(@Validated(View.ValidatedUI.class) @RequestBody Meal meal) {
+        /*if (result.hasErrors()) {
             if (ValidationUtil.getErrorResponse(result).getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
                 ValidationUtil.gerErrorCodesMessagesRest(result);
             }
         }
-        userFormValidator.validate(meal, result);
+        userFormValidator.validate(meal, result);*/
         Meal created = super.create(meal);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
