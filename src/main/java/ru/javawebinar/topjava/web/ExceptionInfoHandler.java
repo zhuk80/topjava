@@ -11,8 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -34,26 +32,6 @@ public class ExceptionInfoHandler {
         return logAndGetErrorInfo(req, e, false);
     }
 
-    /*@ResponseStatus(value = HttpStatus.CONFLICT)  // 409
-    @ExceptionHandler({DataIntegrityViolationException.class, ConstraintViolationException.class})
-    @ResponseBody
-    public ModelAndView conflict(HttpServletRequest req, Exception e) {
-
-        DataIntegrityViolationException exception = new DataIntegrityViolationException("User with this email already present in application");
-        LOG.error("Exception at request " + req.getRequestURL(), e);
-        ModelAndView mav = new ModelAndView("exception/exception");
-        mav.addObject("exception", exception);
-
-        // Interceptor is not invoked, put userTo
-        AuthorizedUser authorizedUser = AuthorizedUser.safeGet();
-        if (authorizedUser != null) {
-            mav.addObject("userTo", authorizedUser.getUserTo());
-        }
-        return mav;
-
-        //DataIntegrityViolationException exception = new DataIntegrityViolationException("User with this email already present in application");
-        //return logAndGetErrorInfo(req, exception, true);
-    }*/
 
     @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
     @ExceptionHandler({DataIntegrityViolationException.class, ConstraintViolationException.class})
@@ -69,13 +47,6 @@ public class ExceptionInfoHandler {
     public ErrorInfo conflict(HttpServletRequest req, ValidationException e) {
         return logAndGetErrorInfo(req, e, true);
     }
-
-    /*@ResponseStatus(value = HttpStatus.CONFLICT)  // 422
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseBody
-    public ErrorInfo conflict(HttpServletRequest req, ConstraintViolationException e) {
-        return logAndGetErrorInfo(req, e, true);
-    }*/
 
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
     @ExceptionHandler(BindException.class)

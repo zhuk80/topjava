@@ -61,7 +61,7 @@ public class ValidationUtil {
             errorString = errorString + error.getField() + " " + error.getDefaultMessage() + "<br>";
         }
         throw new ValidationException(errorString);
-    }
+    }*/
 
     public static void gerErrorCodesMessagesRest(BindingResult result) {
         List<FieldError> errors = result.getFieldErrors();
@@ -70,7 +70,7 @@ public class ValidationUtil {
             errorString = errorString + error.getField() + " " + error.getDefaultMessage() + "; ";
         }
         throw new ValidationException(errorString);
-    }*/
+    }
 
     //    http://stackoverflow.com/a/28565320/548473
     public static Throwable getRootCause(Throwable t) {

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
@@ -16,6 +17,8 @@ import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -30,7 +33,8 @@ public class AdminRestControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = AdminRestController.REST_URL + '/';
 
-
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     public void testGet() throws Exception {
@@ -104,17 +108,14 @@ public class AdminRestControllerTest extends AbstractControllerTest {
         MATCHER.assertEquals(updated, userService.get(USER_ID));
     }
 
-    @Test
-    public void testUpdateConflict() throws Exception {
+    @Test(expected = PersistenceException.class)
+    public void testUpdateEmailConflict() throws Exception {
         User updated = new User(USER);
         updated.setName("UpdatedName");
         updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
         updated.setEmail("admin@gmail.com");
-        mockMvc.perform(put(REST_URL + USER_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(updated)))
-                .andExpect(status().isConflict());
+        super.userService.update(updated);
+        em.flush();
     }
 
     @Test
@@ -142,27 +143,18 @@ public class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    @Test
+    @Test(expected = ConstraintViolationException.class)
     public void testCreateInvalid() throws Exception {
         User expectedWithErrors = new User(null, null, "new@gmail.com", "newPass", 230000, Role.ROLE_USER, Role.ROLE_ADMIN);
-        ResultActions action = mockMvc.perform(post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(ADMIN))
-                //.content(JsonUtil.writeValue(expectedWithErrors))
-                .content(JsonUtil.writeValue(expectedWithErrors)))
-                .andExpect(status().isUnprocessableEntity());
-
-        //User returned = MATCHER.fromJsonAction(action);
+        super.userService.save(expectedWithErrors);
+        em.flush();
     }
 
-    @Test
+    @Test(expected = PersistenceException.class)
     public void testCreateDuplicateEmail() throws Exception {
         User expectedWithErrors = new User(null, "New", "admin@gmail.com", "newPass", 2300, Role.ROLE_USER, Role.ROLE_ADMIN);
-        ResultActions action = mockMvc.perform(post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(expectedWithErrors)))
-                .andExpect(status().isConflict());
+        super.userService.save(expectedWithErrors);
+        em.flush();
     }
 
     @Test

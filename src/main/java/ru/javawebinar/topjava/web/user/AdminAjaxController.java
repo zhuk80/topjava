@@ -27,9 +27,6 @@ import java.util.List;
 public class AdminAjaxController extends AbstractUserController {
 
     @Autowired
-    private UserFormValidator userFormValidator;
-
-    @Autowired
     public AdminAjaxController(UserService service) {
         super(service);
     }
@@ -56,19 +53,11 @@ public class AdminAjaxController extends AbstractUserController {
 
     @PostMapping
     public void createOrUpdate(@Valid UserTo userTo) {
-        //if (userTo.getEmail().equals(AuthorizedUser.get().getUserTo().getEmail())) throw new DataIntegrityViolationException("User with this email already present in application");
-        /*if (result.hasErrors()) {
-            if (ValidationUtil.getErrorResponse(result).getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
-                ValidationUtil.gerErrorCodesMessages(result);
-            }
-        }
-        userFormValidator.validate(userTo, result);*/
         if (userTo.isNew()) {
             super.create(UserUtil.createNewFromTo(userTo));
         } else {
             super.update(userTo, userTo.getId());
         }
-        //return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

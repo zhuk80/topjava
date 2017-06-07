@@ -42,7 +42,7 @@ public class UserFormValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-       /* if (target instanceof User) {
+        if (target instanceof User) {
             User user = (User) target;
             User byEmail = null;
             try {
@@ -54,7 +54,7 @@ public class UserFormValidator implements Validator {
                 throw new DataIntegrityViolationException("User with this email already present in application");
             }
         }
-        else */if (target instanceof UserTo) {
+        else if (target instanceof UserTo) {
             UserTo userTo = (UserTo) target;
 
             if (AuthorizedUser.safeGet() != null) {
@@ -62,7 +62,6 @@ public class UserFormValidator implements Validator {
                 try {
                     service.update(userTo);
                 } catch (DataIntegrityViolationException e) {
-                    //throw new DataIntegrityViolationException("User with this email already present in application");
                     errors.rejectValue("email", "users.emailExists");
                 }
             }
@@ -72,7 +71,6 @@ public class UserFormValidator implements Validator {
                 try {
                 service.save(user);
                 } catch (DataIntegrityViolationException e) {
-                    //throw new DataIntegrityViolationException("User with this email already present in application");
                     errors.rejectValue("email", "users.emailExists");
                 }
             }
